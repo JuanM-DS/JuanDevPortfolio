@@ -1,6 +1,6 @@
 ﻿namespace Core.Domain.Entities
 {
-	public class Skills : BaseEntity, IAuditableProperties
+	public class Skill : BaseEntity, IAuditableProperties
 	{
 		public string CreatedBy { get; set; } = string.Empty;
 		public DateTime Created { get; set; }
