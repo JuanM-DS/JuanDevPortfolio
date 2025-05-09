@@ -8,7 +8,7 @@
 		public DateTime? Updated { get; set; }
 
 		public string Title { get; set; } = string.Empty;
-		public string Descripcion { get; set; } = string.Empty;
+		public string Description { get; set; } = string.Empty;
 		public string GitHubRepositoryUrl { get; set; } = string.Empty;
 		public Guid ProfileId { get; set; }
 
