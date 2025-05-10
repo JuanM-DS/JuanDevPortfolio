@@ -8,9 +8,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSharedLayer();
-
-builder.Services.AddPersistenceLayer(builder.Configuration, builder.Services.BuildServiceProvider());
+builder.Services.AddSharedLayer()
+	.AddPersistenceLayer(builder.Configuration);
 
 var app = builder.Build();
 

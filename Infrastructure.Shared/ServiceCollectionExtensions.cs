@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Core.Application.Interfaces.Services;
+using Infrastructure.Shared.Services;
+using Microsoft.Extensions.DependencyInjection;
 namespace Infrastructure.Shared
 {
 	public static class ServiceCollectionExtensions
@@ -6,7 +8,8 @@ namespace Infrastructure.Shared
 		public static IServiceCollection AddSharedLayer(this IServiceCollection service)
 		{
 			service.AddDataProtection();
-
+			service.AddHttpContextAccessor();
+			service.AddScoped<IHttpContextProvider, HttpContextProvider>();
 			return service;
 		}
 	}
