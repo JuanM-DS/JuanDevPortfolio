@@ -1,9 +1,7 @@
 ﻿using Core.Application.Interfaces.Services;
 using Core.Domain.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using System.Diagnostics;
 
 namespace Infrastructure.Persistence.Context.Interceptors
 {
