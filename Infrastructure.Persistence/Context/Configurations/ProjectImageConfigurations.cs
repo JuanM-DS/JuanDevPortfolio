@@ -13,9 +13,9 @@ namespace Infrastructure.Persistence.Context.Configurations
 
             builder.Property(x => x.Id)
                 .IsRequired()
-                .HasDefaultValue("NewId()");
+                .HasDefaultValueSql("NewId()");
 
-            builder.Property(x => x.Project)
+            builder.Property(x => x.ProjectId)
                 .IsRequired();
 
             builder.Property(x => x.ImageUrl)

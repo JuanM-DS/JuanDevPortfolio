@@ -13,7 +13,7 @@ namespace Infrastructure.Persistence.Context.Configurations
 
             builder.Property(x => x.Id)
                 .IsRequired()
-                .HasDefaultValue("NewId()");
+                .HasDefaultValueSql("NewId()");
 
             builder.Property(x => x.Title)
                 .IsRequired()
@@ -26,11 +26,26 @@ namespace Infrastructure.Persistence.Context.Configurations
             builder.Property(x => x.ProfileId)
                 .IsRequired();
 
-            builder.HasMany(x => x.TechnologyItems)
-                .WithMany();
-
-            #region AuditableProperties
-            builder.Property(x => x.CreatedBy)
+			builder.HasMany(s => s.TechnologyItems)
+					.WithMany()
+					.UsingEntity<Dictionary<string, object>>(
+						"SkillTechnology",
+						j => j.HasOne<TechnologyItem>()
+							 .WithMany()
+							 .HasForeignKey("TechnologyId")
+							 .HasConstraintName("FK_SkillTec_Technology"),
+						j => j.HasOne<Skill>()
+							 .WithMany()
+							 .HasForeignKey("SkillId")
+							 .HasConstraintName("FK_SkillTec_Skill"),
+						j => {
+							j.HasKey("SkillId", "TechnologyId");
+							j.ToTable("SkillTechnology");
+							j.HasIndex("TechnologyId");
+						}
+					);
+			#region AuditableProperties
+			builder.Property(x => x.CreatedBy)
                 .IsRequired()
                 .HasMaxLength(200);
 
