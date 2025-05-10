@@ -9,7 +9,7 @@ namespace Infrastructure.Shared
 		{
 			service.AddDataProtection();
 			service.AddHttpContextAccessor();
-			service.AddScoped<IHttpContextProvider, HttpContextProvider>();
+			service.AddSingleton<IHttpContextProvider, HttpContextProvider>();
 			return service;
 		}
 	}

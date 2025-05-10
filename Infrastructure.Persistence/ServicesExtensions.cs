@@ -19,10 +19,10 @@ namespace Infrastructure.Persistence
 
 			service.AddDbContext<MainContext>((sp, option) =>
 			{
-				var encryptationServices = sp.GetRequiredService<IEncryptationServices>();
+				//var encryptationServices = sp.GetRequiredService<IEncryptationServices>();
 				var savingChangesInterceptor = sp.GetRequiredService<SaveAuditablePropertiesInterceptor>();
 
-				var descrypConnSrt = encryptationServices.Encrypt(connSrt);
+				//var descrypConnSrt = encryptationServices.Encrypt(connSrt);
 				
 				option.UseSqlServer("Data Source=PC\\MSSQLSERVER01; Initial Catalog=JuanDevPortfolioDB; Integrated Security=true; TrustCerverSertificate=true;", x => x.MigrationsAssembly(typeof(MainContext).Assembly));
 				option.AddInterceptors(savingChangesInterceptor);
