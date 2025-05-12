@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Core.Application.Interfaces.Repositories;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Application
 {
-	internal class ServicesExtensions
+	public static class ServicesExtensions
 	{
+		public static IServiceCollection AddApplicationLayer(this IServiceCollection service)
+		{
+			return service;
+		}
 	}
 }

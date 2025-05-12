@@ -8,7 +8,7 @@ namespace Core.Application.Interfaces.Repositories
 	{
 		public Task<bool> CreateAsync(TEntity entity);
 		public Task<bool> UpdateAsync(TEntity entity);
-		public Task<bool> DeleteAsync(Guid id);
+		public Task<bool> DeleteAsync(TEntity entity);
 		public Task<TEntity?> GetByIdAsync(Guid id);
 		public IEnumerable<TEntity> GetAll();
 		public Task<TEntity?> GetByIdAsync(Guid id, params Expression<Func<TEntity, object>> [] properties);
