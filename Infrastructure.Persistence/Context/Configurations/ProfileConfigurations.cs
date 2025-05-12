@@ -13,7 +13,7 @@ namespace Infrastructure.Persistence.Context.Configurations
 
             builder.Property(x => x.Id)
                 .IsRequired()
-                .HasDefaultValue("NewId()");
+                .HasDefaultValueSql("NewId()");
 
             builder.Property(x => x.Name)
                 .IsRequired()
@@ -45,22 +45,26 @@ namespace Infrastructure.Persistence.Context.Configurations
 
             builder.HasMany(x => x.ComenntReferences)
                 .WithOne(x=>x.Profile)
-                .HasForeignKey(x=>x.ProfileId);
+                .HasForeignKey(x=>x.ProfileId)
+                .HasConstraintName("FK_CommentRef_Profile");
 
             builder.HasMany(x => x.Skills)
                 .WithOne(x => x.Profile)
-                .HasForeignKey(x => x.ProfileId);
+                .HasForeignKey(x => x.ProfileId)
+				.HasConstraintName("FK_Skills_Profile");
 
-            builder.HasMany(x => x.Experiences)
+			builder.HasMany(x => x.Experiences)
                 .WithOne(x => x.Profile)
-                .HasForeignKey(x => x.ProfileId);
+                .HasForeignKey(x => x.ProfileId)
+				.HasConstraintName("FK_Experiences_Profile");
 
-            builder.HasMany(x => x.Projects)
+			builder.HasMany(x => x.Projects)
                 .WithOne(x => x.Profile)
-                .HasForeignKey(x => x.ProfileId);
+                .HasForeignKey(x => x.ProfileId)
+				.HasConstraintName("FK_Projects_Profile");
 
-            #region AuditableProperties
-            builder.Property(x => x.CreatedBy)
+			#region AuditableProperties
+			builder.Property(x => x.CreatedBy)
                 .IsRequired()
                 .HasMaxLength(200);
 
