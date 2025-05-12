@@ -1,6 +1,7 @@
 using Core.Domain.Enumerables;
 using Infrastructure.Persistence;
 using Infrastructure.Shared;
+using JuanDevPortfolio.Api.Middlewares;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +25,10 @@ Log.Logger = new LoggerConfiguration()
 	.CreateLogger();
 builder.Host.UseSerilog();
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
 var app = builder.Build();
+app.UseExceptionHandler();
 if (app.Environment.IsDevelopment())
 {
 	app.UseSwagger();
