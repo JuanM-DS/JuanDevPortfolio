@@ -1,7 +1,9 @@
 ﻿using Core.Application.Interfaces.Repositories;
 using Core.Domain.Entities;
+using Core.Domain.Enumerables;
 using Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using System.Linq.Expressions;
 
 namespace Infrastructure.Persistence.Repositories
@@ -28,6 +30,7 @@ namespace Infrastructure.Persistence.Repositories
             }
             catch (Exception ex)
             {
+                Log.ForContext(LoggerKeys.Repository_Logs.ToString(), true).Error(ex.Message);
                 return false;
             }
         }
@@ -42,6 +45,7 @@ namespace Infrastructure.Persistence.Repositories
             }
             catch (Exception ex)
             {
+                Log.ForContext(LoggerKeys.Repository_Logs.ToString(), true).Error(ex.Message);
                 return false;
             }
         }
@@ -90,6 +94,7 @@ namespace Infrastructure.Persistence.Repositories
             }
             catch (Exception ex)
             {
+                Log.ForContext(LoggerKeys.Repository_Logs.ToString(), true).Error(ex.Message);
                 return false;
             }
         }
