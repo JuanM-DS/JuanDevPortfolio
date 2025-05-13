@@ -3,6 +3,7 @@
 namespace Core.Application.DTOs.TTechnologyItem
 {
     public record TechnologyItemDTO(
+        Guid Id,
         string Title,
         string ImageIconUrl,
         string Description,

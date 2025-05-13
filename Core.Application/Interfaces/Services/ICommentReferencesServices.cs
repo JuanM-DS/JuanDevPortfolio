@@ -3,6 +3,5 @@ using Core.Domain.Entities;
 
 namespace Core.Application.Interfaces.Services
 {
-    public interface ICommentReferencesServices : IBaseServices<CommentReferences, CommentReferencesDTO, SaveCommentReferencesDTO>
-    {}
+    public interface ICommentReferencesServices : IBaseServices<CommentReferences, CommentReferencesDTO, SaveCommentReferencesDTO> { }
 }

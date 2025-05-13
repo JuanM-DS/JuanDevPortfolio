@@ -1,4 +1,4 @@
-﻿using Application.Interfaces.Services;
+﻿using Core.Application.Interfaces.Helpers;
 using Core.Application.Interfaces.Repositories;
 using Infrastructure.Persistence.Context;
 using Infrastructure.Persistence.Context.Interceptors;

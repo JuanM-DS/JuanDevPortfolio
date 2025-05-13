@@ -1,6 +1,7 @@
 ﻿namespace Core.Application.DTOs.Experience
 {
     public record ExperienceDTO(
+        Guid Id,
         string Position,
         string CompanyName,
         DateTime FromDate,

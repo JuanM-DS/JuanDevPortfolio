@@ -2,6 +2,6 @@
 
 namespace Core.Application.Interfaces.Repositories
 {
-    public interface ICommentReferencesRepository : IBaseRepository<SaveCommentReferencesDTO>
+    public interface ICommentReferencesRepository : IBaseRepository<CommentReferences>
     {}
 }

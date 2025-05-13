@@ -1,4 +1,4 @@
-﻿using Application.Interfaces.Services;
+﻿using Core.Application.Interfaces.Helpers;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace Infrastructure.Shared.Services
