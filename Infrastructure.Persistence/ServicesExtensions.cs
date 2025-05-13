@@ -42,6 +42,7 @@ namespace Infrastructure.Persistence
             service.AddScoped<IProjectImageRepository, ProjectImageRepository>();
             service.AddScoped<ISkillRepository, SkillRepository>();
             service.AddScoped<ITechnologyItemRepository, TechnologyItemRepository>();
+            service.AddScoped<ICommentReferencesRepository, CommentReferencesRepository>();
             #endregion
 
             return service;
