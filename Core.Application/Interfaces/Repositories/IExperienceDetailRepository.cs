@@ -2,6 +2,6 @@
 
 namespace Core.Application.Interfaces.Repositories
 {
-    public interface IExperienceDetailRepository : IBaseRepository<ExperienceDetail>
+    public interface IExperienceDetailRepository : IBaseRepository<ExperienceDetailDTO>
     {}
 }
