@@ -1,4 +1,4 @@
-﻿namespace Core.Application.Interfaces.Services
+﻿namespace Core.Application.Interfaces.Helpers
 {
 	public interface IHttpContextProvider
 	{

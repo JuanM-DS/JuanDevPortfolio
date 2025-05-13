@@ -1,4 +1,4 @@
-﻿using Core.Application.Interfaces.Services;
+﻿using Core.Application.Interfaces.Helpers;
 using Infrastructure.Shared.Services;
 using Microsoft.Extensions.DependencyInjection;
 namespace Infrastructure.Shared
