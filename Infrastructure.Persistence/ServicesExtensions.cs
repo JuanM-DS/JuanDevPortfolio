@@ -35,6 +35,13 @@ namespace Infrastructure.Persistence
 			
 			#region ID
 			service.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            service.AddScoped<IExperienceRepository, ExperienceRepository>();
+            service.AddScoped<IExperienceDetailRepository, ExperienceDetailRepository>();
+            service.AddScoped<IProfileRepository, ProfileRepository>();
+            service.AddScoped<IProjectRepository, ProjectRepository>();
+            service.AddScoped<IProjectImageRepository, ProjectImageRepository>();
+            service.AddScoped<ISkillRepository, SkillRepository>();
+            service.AddScoped<ITechnologyItemRepository, TechnologyItemRepository>();
             #endregion
 
             return service;

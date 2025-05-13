@@ -1,5 +1,4 @@
-﻿using Core.Application.Interfaces.Repositories;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Application
 {
@@ -7,7 +6,7 @@ namespace Core.Application
 	{
 		public static IServiceCollection AddApplicationLayer(this IServiceCollection service)
 		{
-			return service;
+            return service;
 		}
 	}
 }
