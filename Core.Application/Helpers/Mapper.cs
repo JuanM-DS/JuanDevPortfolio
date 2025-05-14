@@ -1,6 +1,9 @@
 ﻿using Core.Application.DTOs.Profile;
 using Core.Application.Interfaces.Helpers;
 using Core.Domain.Entities;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net.NetworkInformation;
 
 namespace Core.Application.Helpers
 {
@@ -14,7 +17,7 @@ namespace Core.Application.Helpers
             AddMappingProfile();
         }
 
-        public TResult? Handler<TResult, TSource>(TSource source)
+        public TResult? Map<TResult, TSource>(TSource source)
         {
             try
             {
@@ -33,6 +36,14 @@ namespace Core.Application.Helpers
                 return default;
             }
         }
+
+        public List<TResult>? Map<TResult, TSource>(List<TSource> source) =>
+            source
+            .Where(x => x is not null)
+            .Select(x => Map<TResult, TSource>(x))
+            .Where(x=>x is not null)
+            .Cast<TResult>()
+            .ToList();
 
         private void AddMappingProfile()
         {

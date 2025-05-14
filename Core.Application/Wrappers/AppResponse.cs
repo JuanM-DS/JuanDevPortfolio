@@ -21,6 +21,12 @@ namespace Core.Application.Wrappers
             Succeded = true;
             HttpStatusCode = httpStatusCode;
         }
+        public AppResponse(HttpStatusCode httpStatusCode, string? message = null)
+        {
+            Message = message;
+            Succeded = true;
+            HttpStatusCode = httpStatusCode;
+        }
 
         public AppResponse(AppError error, HttpStatusCode httpStatusCode, string? message = null)
         {
@@ -38,7 +44,6 @@ namespace Core.Application.Wrappers
             Errors = Errors ?? [];
             Errors.AddRange(error);
         }
-
     }
 
     public static class AppResponseExt
