@@ -1,5 +1,4 @@
-﻿using Core.Application.DTOs.CommentReferences;
-using Core.Application.Interfaces.Helpers;
+﻿using Core.Application.Interfaces.Helpers;
 using Core.Application.Interfaces.Repositories;
 using Core.Application.Interfaces.Services;
 using Core.Application.Wrappers;
@@ -113,12 +112,5 @@ namespace Core.Application.Services
 
             return new(entityDto, HttpStatusCode.OK);
         }
-    }
-
-    public class CommentReferencesServices: BaseServices<CommentReferences, CommentReferencesDTO, SaveCommentReferencesDTO>, ICommentReferencesServices
-    {
-        public CommentReferencesServices(ICommentReferencesRepository repo, IMapper Mapper)
-            : base(repo, Mapper)
-        {}
     }
 }
