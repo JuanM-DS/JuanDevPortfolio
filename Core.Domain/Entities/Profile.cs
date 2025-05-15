@@ -1,4 +1,6 @@
-﻿namespace Core.Domain.Entities
+﻿using Core.Domain.CommonEntities;
+
+namespace Core.Domain.Entities
 {
 	public class Profile : BaseEntity, IAuditableProperties
 	{

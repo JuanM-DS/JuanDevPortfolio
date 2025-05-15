@@ -19,8 +19,12 @@ Log.Logger = new LoggerConfiguration()
 	.WriteTo.File("Logs\\General_log.txt")
 	.WriteTo.Logger(lg =>
 
-		lg.Filter.ByIncludingOnly(f=>f.Properties.ContainsKey(LoggerKeys.Repository_Logs.ToString()))
-		.WriteTo.File($"Logs\\Infrastructure\\{LoggerKeys.Repository_Logs}.txt")
+		lg.Filter.ByIncludingOnly(f=>f.Properties.ContainsKey(LoggerKeys.RepositoryLogs.ToString()))
+		.WriteTo.File($"Logs\\Infrastructure\\{LoggerKeys.RepositoryLogs}.txt")
+	)
+	.WriteTo.Logger(lg => 
+		lg.Filter.ByIncludingOnly(p=>p.Properties.ContainsKey(LoggerKeys.AuthenticationLogs.ToString()))
+		.WriteTo.File($"Logs\\Infrastructure\\{LoggerKeys.AuthenticationLogs}.txt")
 	)
 	.CreateLogger();
 builder.Host.UseSerilog();

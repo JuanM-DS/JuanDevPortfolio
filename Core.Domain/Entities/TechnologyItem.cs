@@ -1,4 +1,5 @@
-﻿using Core.Domain.Enumerables;
+﻿using Core.Domain.CommonEntities;
+using Core.Domain.Enumerables;
 
 namespace Core.Domain.Entities
 {

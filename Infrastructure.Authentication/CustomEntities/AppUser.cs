@@ -2,6 +2,6 @@
 
 namespace Infrastructure.Authentication.CustomEntities
 {
-    public class AppUser : IdentityUser<Guid>
+	public class AppUser : IdentityUser<Guid>
     {}
 }
