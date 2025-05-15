@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSharedLayer()
+builder.Services.AddSharedLayer(builder.Configuration)
 	.AddPersistenceLayer(builder.Configuration);
 
 builder.Services.AddLogging();
