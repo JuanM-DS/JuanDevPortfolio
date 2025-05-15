@@ -30,7 +30,7 @@ namespace Infrastructure.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                Log.ForContext(LoggerKeys.Repository_Logs.ToString(), true).Error(ex.Message);
+                Log.ForContext(LoggerKeys.RepositoryLogs.ToString(), true).Error(ex.Message);
                 return false;
             }
         }
@@ -45,7 +45,7 @@ namespace Infrastructure.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                Log.ForContext(LoggerKeys.Repository_Logs.ToString(), true).Error(ex.Message);
+                Log.ForContext(LoggerKeys.RepositoryLogs.ToString(), true).Error(ex.Message);
                 return false;
             }
         }
@@ -94,7 +94,7 @@ namespace Infrastructure.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                Log.ForContext(LoggerKeys.Repository_Logs.ToString(), true).Error(ex.Message);
+                Log.ForContext(LoggerKeys.RepositoryLogs.ToString(), true).Error(ex.Message);
                 return false;
             }
         }

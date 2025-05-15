@@ -2,7 +2,7 @@
 {
     public interface IMapper
     {
-        public TResult? Handler<TResult, TSource>(TSource source);
-        public void AddMappingProfile<TResult, TSource>(Func<object, object> func);
+        public TResult? Map<TResult, TSource>(TSource source);
+        public List<TResult>? Map<TResult, TSource>(List<TSource> source);
     }
 }
