@@ -23,6 +23,7 @@ namespace Core.Application
 
 			#region Settings
 			service.Configure<EmailSettings>(options => confi.GetSection("EmailSettings").Bind(options));
+			service.Configure<JwtSettings>(options => confi.GetSection("JwtSettings").Bind(options));
 			#endregion
 			return service;
 		}

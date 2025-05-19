@@ -15,12 +15,14 @@ namespace Infrastructure.Shared.Services
 		private readonly EmailSettings emailSettings;
 		private readonly IOptions<EmailSettings> emailSettins;
 		private readonly ITemplateServices templateServices;
+		private readonly IEncryptationServices encryptationServices;
 
-		public EmailServices(IOptions<EmailSettings> EmailSettins, ITemplateServices TemplateServices)
+		public EmailServices(IOptions<EmailSettings> EmailSettins, ITemplateServices TemplateServices, IEncryptationServices EncryptationServices)
 		{
 			emailSettings = EmailSettins.Value;
 			emailSettins = EmailSettins;
 			templateServices = TemplateServices;
+			encryptationServices = EncryptationServices;
 		}
 
 		public async Task<bool> SendTemplateAsync<TModel>(EmailRequestDTO request, string ViewName, TModel model)
@@ -54,8 +56,12 @@ namespace Infrastructure.Shared.Services
 
 		private async Task<bool> SendAsync(EmailRequestDTO request, string htmlBody)
 		{
+			var host = encryptationServices.Decrypt(emailSettings.SmptHost);
+			var emailFrom = encryptationServices.Decrypt(emailSettings.EmailFrom);
+			var password = encryptationServices.Decrypt(emailSettings.SmtpPassword);
+
 			var email = new MimeMessage();
-			email.Sender = MailboxAddress.Parse(emailSettings.EmailFrom);
+			email.Sender = MailboxAddress.Parse(emailFrom);
 			email.To.Add(MailboxAddress.Parse(request.To));
 			email.Subject = request.Subject;
 			var body = new BodyBuilder() { HtmlBody = htmlBody };
@@ -65,8 +71,8 @@ namespace Infrastructure.Shared.Services
 			{
 				using var client = new SmtpClient();
 				client.ServerCertificateValidationCallback = (a, s, d, f) => true;
-				await client.ConnectAsync(emailSettings.SmptHost, emailSettings.SmtpPort, SecureSocketOptions.StartTls);
-				await client.AuthenticateAsync(emailSettings.SmtpUser, emailSettings.SmtpPassword);
+				await client.ConnectAsync(host, emailSettings.SmtpPort, SecureSocketOptions.StartTls);
+				await client.AuthenticateAsync(emailFrom, password);
 				await client.SendAsync(email);
 				await client.DisconnectAsync(true);
 			}

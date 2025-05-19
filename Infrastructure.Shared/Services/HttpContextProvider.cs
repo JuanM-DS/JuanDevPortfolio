@@ -6,30 +6,30 @@ namespace Infrastructure.Shared.Services
 {
 	public class HttpContextProvider : IHttpContextProvider
 	{
-		private readonly IHttpContextAccessor httpContext;
+		private readonly IHttpContextAccessor accesor;
 
-		public HttpContextProvider(IHttpContextAccessor httpContext)
+		public HttpContextProvider(IHttpContextAccessor accesor)
 		{
-			this.httpContext = httpContext;
+			this.accesor = accesor;
 		}
 		public string? GetCurrentUserName()
 		{
-			if (httpContext is null)
+			if (accesor is null)
 				return null;
 
-			var userName = httpContext.HttpContext.User.Identity?.Name;
+			var userName = accesor.HttpContext?.User.Identity?.Name;
 			
 			return userName;
 		}
 
 		public List<string>? CurrentUserRoles()
 		{
-			if (httpContext is null)
+			if (accesor is null)
 				return null;
 
-			var roles = httpContext.HttpContext.User.Claims.Where(x=>x.Type == ClaimTypes.Role).Select(x=>x.Value);
+			var roles = accesor.HttpContext?.User.Claims.Where(x=>x.Type == ClaimTypes.Role).Select(x=>x.Value);
 
-			return roles.ToList();
+			return roles?.ToList();
 		}
 	}
 }
