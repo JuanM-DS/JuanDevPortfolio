@@ -10,8 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSharedLayer()
-	.AddPersistenceLayer(builder.Configuration);
+builder.Services.AddSharedLayer(builder.Configuration)
+	.AddPersistenceLayer(builder.Configuration)
+	.AddAuthenticationLayer(builder.Configuration);
 
 builder.Services.AddLogging();
 Log.Logger = new LoggerConfiguration()
@@ -26,6 +27,11 @@ Log.Logger = new LoggerConfiguration()
 		lg.Filter.ByIncludingOnly(p=>p.Properties.ContainsKey(LoggerKeys.AuthenticationLogs.ToString()))
 		.WriteTo.File($"Logs\\Infrastructure\\{LoggerKeys.AuthenticationLogs}.txt")
 	)
+	.WriteTo.Logger(x =>
+	{
+		x.Filter.ByIncludingOnly(p => p.Properties.ContainsKey(LoggerKeys.SharedLogs.ToString()))
+		.WriteTo.File($"Logs\\Infrastructure\\{LoggerKeys.SharedLogs}.txt");
+	})
 	.CreateLogger();
 builder.Host.UseSerilog();
 

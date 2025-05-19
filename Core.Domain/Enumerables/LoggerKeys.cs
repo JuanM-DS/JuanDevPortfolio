@@ -3,6 +3,7 @@
     public enum LoggerKeys
 	{
 		RepositoryLogs,
-		AuthenticationLogs
+		AuthenticationLogs,
+		SharedLogs
 	}
 }
