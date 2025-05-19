@@ -26,6 +26,11 @@ Log.Logger = new LoggerConfiguration()
 		lg.Filter.ByIncludingOnly(p=>p.Properties.ContainsKey(LoggerKeys.AuthenticationLogs.ToString()))
 		.WriteTo.File($"Logs\\Infrastructure\\{LoggerKeys.AuthenticationLogs}.txt")
 	)
+	.WriteTo.Logger(x =>
+	{
+		x.Filter.ByIncludingOnly(p => p.Properties.ContainsKey(LoggerKeys.SharedLogs.ToString()))
+		.WriteTo.File($"Logs\\Infrastructure\\{LoggerKeys.SharedLogs}.txt");
+	})
 	.CreateLogger();
 builder.Host.UseSerilog();
 

@@ -2,7 +2,6 @@
 using Infrastructure.Shared.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net.Mail;
 namespace Infrastructure.Shared
 {
 	public static class ServiceCollectionExtensions
@@ -12,14 +11,8 @@ namespace Infrastructure.Shared
 			service.AddDataProtection();
 			service.AddHttpContextAccessor();
 
-			service.AddFluentEmail(confi.GetSection("EmailSmpSettings")["SmptFrom"])
-				.AddRazorRenderer()
-				.AddSmtpSender(new SmtpClient()
-				{
-					Host = confi.GetSection("EmailSmpSettings")["SmptHost"]!,
-					Port = int.TryParse(confi.GetSection("EmailSmpSettings")["SmptPort"], out var result) ? result : 875
-				});
-
+			service.AddScoped<IEmailServices, EmailServices>();
+			service.AddScoped<ITemplateServices, TemplateServices>();
 			service.AddSingleton<IHttpContextProvider, HttpContextProvider>();
 			return service;
 		}
