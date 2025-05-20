@@ -16,6 +16,6 @@ namespace Core.Application.Interfaces.Services
 
         public Task<AppResponse<Empty>> ResetPassword(ResetPasswordRequestDTO request);
 
-        public Task<AppResponse<string>> GenerateResetToken();
+        public Task<AppResponse<string>> GenerateResetTokenAsync();
 	}
 }

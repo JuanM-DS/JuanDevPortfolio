@@ -6,11 +6,16 @@ using Core.Application.Interfaces.Services;
 using Core.Application.Wrappers;
 using Core.Domain.Entities;
 using Core.Domain.Enumerables;
+using Core.Domain.Settings;
 using Infrastructure.Authentication.CustomEntities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -23,15 +28,20 @@ namespace Infrastructure.Authentication.Services
         private readonly SignInManager<AppUser> signingManager;
 		private readonly IEmailServices emailServices;
 		private readonly IUriServices uriServices;
+		private readonly IHttpContextProvider httpContextProvider;
+		private JwtSettings jwtSettings;
 
-		public AuthenticationServices(UserManager<AppUser> UserManager, RoleManager<AppRole> RoleManager, SignInManager<AppUser> SigningManager, IEmailServices EmailServices, IUriServices UriServices)
+		public AuthenticationServices(UserManager<AppUser> UserManager, RoleManager<AppRole> RoleManager, SignInManager<AppUser> SigningManager, IEmailServices EmailServices, IUriServices UriServices, IOptions<JwtSettings> JwtSettings, IHttpContextProvider HttpContextProvider)
         {
             userManager = UserManager;
             roleManager = RoleManager;
             signingManager = SigningManager;
 			emailServices = EmailServices;
 			uriServices = UriServices;
+			httpContextProvider = HttpContextProvider;
+			jwtSettings = JwtSettings.Value;
 		}
+		
 		public async Task<AppResponse<UserDTO>> RegisterAsync(SaveUserDTO saveUser)
 		{
 			if(saveUser.Password != saveUser.ConfirmPassword)
@@ -96,7 +106,7 @@ namespace Infrastructure.Authentication.Services
 			};
 
 			if (user is null)
-				AppError.Create($"No se encontro ningun usuario con la cuenta: {request.Account}")
+				AppError.Create($"No se encontró ningún usuario con la cuenta: {request.Account}")
 					.BuildResponse<Empty>(HttpStatusCode.BadRequest)
 					.Throw();
 
@@ -119,7 +129,6 @@ namespace Infrastructure.Authentication.Services
 
 			return new(HttpStatusCode.OK, "Correo para actualizar contraseña enviado correctamente");
 		}
-
 
 		public async Task<AppResponse<Empty>> ResetPassword(ResetPasswordRequestDTO request)
 		{
@@ -149,30 +158,84 @@ namespace Infrastructure.Authentication.Services
 
 			return new(HttpStatusCode.OK, "Se realizo el cambio de contraseña correctamente");
 		}
-		public Task<AppResponse<Empty>> SignInAsync(LoginRequestDTO Login)
-		{
-			throw new NotImplementedException();
-		}
 
 		public async Task SignOutAsync()
 		{
 			await signingManager.SignOutAsync();
 		}
 
+		public async Task<AppResponse<string>> SignInAsync(LoginRequestDTO Login)
+		{
+			var user = IsEmailAccount(Login.Account) switch
+			{
+				true => await userManager.FindByEmailAsync(Login.Account),
+				false => await userManager.FindByNameAsync(Login.Account)
+			};
+
+			if(user is null)
+				AppError.Create($"No se encontró ningún usuario con la cuenta: {Login.Account}")
+					.BuildResponse<Empty>(HttpStatusCode.BadRequest)
+					.Throw();
+
+			var result = await signingManager.PasswordSignInAsync(user!, Login.Password, false, false);
+			if(result.Succeeded)
+				AppError.Create($"Hubo un error al iniciar sesión")
+					.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
+					.Throw();
+
+			var token = await GenerateJwtTokenAsync(user!);
+
+			return new(token, HttpStatusCode.OK, "Se ha Iniciado sesión correctamente");
+		}
+
+		public async Task<AppResponse<string>> GenerateResetTokenAsync()
+		{
+			var userName = httpContextProvider.GetCurrentUserName();
+			var user = await userManager.FindByNameAsync(userName ?? "");
+			if(userName is null)
+				AppError.Create($"No existe ningún usuario en sesión")
+					.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
+					.Throw();
+
+			var token = await GenerateJwtTokenAsync(user!);
+			return new(token, HttpStatusCode.OK, "Se ha generado un nuevo token correctamente");
+		}
+
+		#region Privates
 		private bool IsEmailAccount(string account)
 		{
 			var result =  Regex.Match(account, "^[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,}$\r\n");
 			return result.Success;
 		}
-
-		Task<AppResponse<string>> IAuthenticationServices.SignInAsync(LoginRequestDTO Login)
+		private async Task<string> GenerateJwtTokenAsync(AppUser user)
 		{
-			throw new NotImplementedException();
-		}
+			var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.ScretKey));
+			var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.Sha256);
+			var header = new JwtHeader(credentials);
 
-		public Task<AppResponse<string>> GenerateResetToken()
-		{
-			throw new NotImplementedException();
+			var userClaims = await userManager.GetClaimsAsync(user);
+			var roleClaims = (await userManager.GetRolesAsync(user)).Select(x => new Claim(ClaimTypes.Role, x));
+			var claims = new List<Claim>()
+			{
+				new Claim(JwtRegisteredClaimNames.Sub, user.UserName!),
+				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+				new Claim(JwtRegisteredClaimNames.Email, user.Email!),
+				new Claim("UserId", user.Id.ToString())
+			}
+			.Union(userClaims).Union(roleClaims);
+
+			var payload = new JwtPayload
+				(
+				jwtSettings.Issuer,
+				jwtSettings.Audience,
+				claims,
+				DateTime.UtcNow,
+				DateTime.UtcNow.AddMinutes(jwtSettings.DurationInMinutes)
+				);
+
+			var token = new JwtSecurityToken(header, payload);
+			return new JwtSecurityTokenHandler().WriteToken(token);
 		}
+		#endregion
 	}
 }
