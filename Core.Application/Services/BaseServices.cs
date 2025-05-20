@@ -24,7 +24,7 @@ namespace Core.Application.Services
         {
             var entity = _mapper.Map<TEntity, SaveTEntityDto>(saveDto);
             if (entity is null)
-                AppError.Create("Hubo problemas al mappear la request")
+                AppError.Create("Hubo problemas al mappear la entidad")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
                     .Throw();
 
