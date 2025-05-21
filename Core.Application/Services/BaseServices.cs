@@ -1,6 +1,7 @@
 ﻿using Core.Application.Interfaces.Helpers;
 using Core.Application.Interfaces.Repositories;
 using Core.Application.Interfaces.Services;
+using Core.Application.Mappings;
 using Core.Application.Wrappers;
 using Core.Domain.Entities;
 using System.Net;
@@ -12,17 +13,15 @@ namespace Core.Application.Services
         where TEntityDto : class
     {
         protected readonly IBaseRepository<TEntity> _repo;
-        protected readonly IMapper _mapper;
 
-        public BaseServices(IBaseRepository<TEntity> repo, IMapper Mapper)
+        public BaseServices(IBaseRepository<TEntity> repo)
         {
             _repo = repo;
-            _mapper = Mapper;
         }
 
         public async Task<AppResponse<TEntityDto>> CreateAsync(SaveTEntityDto saveDto)
         {
-            var entity = _mapper.Map<TEntity, SaveTEntityDto>(saveDto);
+            var entity = Mapper.Map<TEntity, SaveTEntityDto>(saveDto);
             if (entity is null)
                 AppError.Create("Hubo problemas al mappear la entidad")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
@@ -34,7 +33,7 @@ namespace Core.Application.Services
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
                     .Throw();
 
-            var entityDto = _mapper.Map<TEntityDto, TEntity>(entity!);
+            var entityDto = Mapper.Map<TEntityDto, TEntity>(entity!);
             if (entity is null)
                 AppError.Create("Hubo problemas al mappear la entidad creada")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
@@ -66,7 +65,7 @@ namespace Core.Application.Services
             if (data is null || !data.Any())
                 return new(HttpStatusCode.NoContent, "No hay elementos para mostrar");
 
-            var dataDto = _mapper.Map<TEntityDto, TEntity>(data);
+            var dataDto = Mapper.Map<TEntityDto, TEntity>(data);
             if(dataDto is null)
                 AppError.Create("Hubo problemas al mappear la request")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
@@ -81,7 +80,7 @@ namespace Core.Application.Services
             if (data is null)
                 return new(HttpStatusCode.NoContent, "No hay elementos para mostrar");
 
-            var dataDto = _mapper.Map<TEntityDto, TEntity>(data);
+            var dataDto = Mapper.Map<TEntityDto, TEntity>(data);
             if (dataDto is null)
                 AppError.Create("Hubo problemas al mappear la request")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
@@ -92,7 +91,7 @@ namespace Core.Application.Services
 
         public async Task<AppResponse<TEntityDto>> UpdateAsync(SaveTEntityDto saveDto)
         {
-            var entity = _mapper.Map<TEntity, SaveTEntityDto>(saveDto);
+            var entity = Mapper.Map<TEntity, SaveTEntityDto>(saveDto);
             if(entity is null)
                 AppError.Create("Hubo problemas al mappear la request")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
@@ -104,7 +103,7 @@ namespace Core.Application.Services
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
                     .Throw();
 
-            var entityDto = _mapper.Map<TEntityDto, TEntity>(entity!);
+            var entityDto = Mapper.Map<TEntityDto, TEntity>(entity!);
             if(entityDto is null)
                 AppError.Create("Hubo problemas al mappear la request")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)

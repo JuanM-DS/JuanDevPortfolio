@@ -12,7 +12,7 @@ namespace Core.Application.DTOs.Experience
 		public string Description { get; set; } = string.Empty;
 		public string ImageUrl { get; set; } = string.Empty;
 		public Guid ProfileId { get; set; }
-		public List<TechnologyItemDTO> TechnologyItems { get; set; } = [];
-		public List<SaveWorkExperienceDetailDTO> ExperienceDetail { get; set; } = [];
+		public List<SaveTechnologyItemDTO> TechnologyItems { get; set; } = [];
+		public List<SaveWorkExperienceDetailDTO> ExperienceDetails { get; set; } = [];
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using Core.Application.DTOs.Experience;
-using Core.Application.Interfaces.Helpers;
 using Core.Application.Interfaces.Repositories;
 using Core.Application.Interfaces.Services;
+using Core.Application.Mappings;
 using Core.Application.QueryFilters;
 using Core.Application.Wrappers;
 using Core.Domain.Entities;
@@ -14,8 +14,8 @@ namespace Core.Application.Services
 		private readonly IWorkExperienceRepository repo;
 		private readonly ITechnologyItemRepository technologyItemRepo;
 
-		public WorkExperienceServices(IWorkExperienceRepository repo, IMapper mapper, ITechnologyItemRepository TechnologyItemRepo)
-            : base(repo, mapper)
+		public WorkExperienceServices(IWorkExperienceRepository repo, ITechnologyItemRepository TechnologyItemRepo)
+            : base(repo)
 		{
 			this.repo = repo;
 			technologyItemRepo = TechnologyItemRepo;
@@ -53,7 +53,7 @@ namespace Core.Application.Services
 			if (data is null || !data.Any())
 				return new(HttpStatusCode.NoContent, "No hay elementos para mostrar");
 
-			var dataDto = _mapper.Map<WorkExperienceDTO, WorkExperience>(data);
+			var dataDto = Mapper.Map<WorkExperienceDTO, WorkExperience>(data);
 			if (dataDto is null)
 				AppError.Create("Hubo problemas al mappear la request")
 					.BuildResponse<WorkExperienceDTO>(HttpStatusCode.InternalServerError)
@@ -61,6 +61,5 @@ namespace Core.Application.Services
 
 			return new(dataDto, HttpStatusCode.OK);
 		}
-
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using Core.Application.DTOs.ProjectImage;
-using Core.Application.Interfaces.Helpers;
 using Core.Application.Interfaces.Repositories;
 using Core.Application.Interfaces.Services;
+using Core.Application.Mappings;
 using Core.Application.QueryFilters;
 using Core.Application.Wrappers;
 using Core.Domain.Entities;
@@ -9,12 +9,12 @@ using System.Net;
 
 namespace Core.Application.Services
 {
-    public class ProjectImageServices : BaseServices<ProjectImage, ProjectImageDTO, SaveProjectImageDTO>, IProjectImageServices
+	public class ProjectImageServices : BaseServices<ProjectImage, ProjectImageDTO, SaveProjectImageDTO>, IProjectImageServices
     {
 		private readonly IProjectImageRepository repo;
 
-		public ProjectImageServices(IProjectImageRepository repo, IMapper mapper)
-            : base(repo, mapper)
+		public ProjectImageServices(IProjectImageRepository repo)
+            : base(repo)
 		{
 			this.repo = repo;
 		}
@@ -25,7 +25,7 @@ namespace Core.Application.Services
 			if (data is null || !data.Any())
 				return new(HttpStatusCode.NoContent, "No hay elementos para mostrar");
 
-			var dataDto = _mapper.Map<ProjectImageDTO, ProjectImage>(data);
+			var dataDto = Mapper.Map<ProjectImageDTO, ProjectImage>(data);
 			if (dataDto is null)
 				AppError.Create("Hubo problemas al mappear la request")
 					.BuildResponse<ProjectImageDTO>(HttpStatusCode.InternalServerError)
