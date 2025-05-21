@@ -1,6 +1,6 @@
 ﻿namespace Core.Application.DTOs.CommentReferences
 {
-    public record CommentReferencesDTO(
+    public record CommentReferenceDTO(
         Guid Id,
         string PersonName,
         string? ProfileImageUrl,

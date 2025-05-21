@@ -22,21 +22,21 @@ namespace Infrastructure.Persistence
 
 			service.AddDbContext<MainContext>((sp, option) =>
 			{
-				var encryptationServices = sp.GetRequiredService<IEncryptationServices>();
-				var savingChangesInterceptor = sp.GetRequiredService<SaveAuditablePropertiesInterceptor>();
+				//var encryptationServices = sp.GetRequiredService<IEncryptationServices>();
+				//var savingChangesInterceptor = sp.GetRequiredService<SaveAuditablePropertiesInterceptor>();
 
-				var descrypConnSrt = encryptationServices.Encrypt(connSrt);
+				//var descrypConnSrt = encryptationServices.Encrypt(connSrt);
 				
-				option.UseSqlServer(descrypConnSrt, x => x.MigrationsAssembly(typeof(MainContext).Assembly));
-				option.AddInterceptors(savingChangesInterceptor);
+				option.UseSqlServer("Data Source=PC\\MSSQLSERVER01; Initial Catalog=JuanDevPortfolioDB; Integrated Security=true; TrustServerCertificate=true;", x => x.MigrationsAssembly(typeof(MainContext).Assembly));
+				//option.AddInterceptors(savingChangesInterceptor);
 			});
 
 			#endregion
 			
 			#region ID
 			service.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
-            service.AddScoped<IExperienceRepository, ExperienceRepository>();
-            service.AddScoped<IExperienceDetailRepository, ExperienceDetailRepository>();
+            service.AddScoped<IWorkExperienceRepository, WorkExperienceRepository>();
+            service.AddScoped<IWorkExperienceDetailRepository, WorkExperienceDetailRepository>();
             service.AddScoped<IProfileRepository, ProfileRepository>();
             service.AddScoped<IProjectRepository, ProjectRepository>();
             service.AddScoped<IProjectImageRepository, ProjectImageRepository>();

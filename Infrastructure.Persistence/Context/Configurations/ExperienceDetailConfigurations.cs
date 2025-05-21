@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistence.Context.Configurations
 {
-    public class ExperienceDetailConfigurations : IEntityTypeConfiguration<ExperienceDetail>
+    public class ExperienceDetailConfigurations : IEntityTypeConfiguration<WorkExperienceDetail>
     {
-        public void Configure(EntityTypeBuilder<ExperienceDetail> builder)
+        public void Configure(EntityTypeBuilder<WorkExperienceDetail> builder)
         {
-            builder.ToTable("Experience_Details");
+            builder.ToTable("WorkExperience_Details");
             builder.HasKey(x=>x.Id);
 
             builder.Property(x => x.Id)

@@ -11,11 +11,13 @@ namespace Core.Application.Services
 {
     public class ProjectServices : BaseServices<Project, ProjectDTO, SaveProjectDTO>, IProjectServices
     {
+		private readonly IProjectRepository repo;
 		private readonly ITechnologyItemRepository technologyItemRepo;
 
 		public ProjectServices(IProjectRepository repo, IMapper mapper, ITechnologyItemRepository TechnologyItemRepo)
             : base(repo, mapper)
 		{
+			this.repo = repo;
 			technologyItemRepo = TechnologyItemRepo;
 		}
 
@@ -44,5 +46,21 @@ namespace Core.Application.Services
 
 			return new(HttpStatusCode.OK);
 		}
+
+		public AppResponse<List<ProjectDTO>> GetAll(ProjectFilter filter)
+		{
+			var data = repo.GetAll(filter).ToList();
+			if (data is null || !data.Any())
+				return new(HttpStatusCode.NoContent, "No hay elementos para mostrar");
+
+			var dataDto = _mapper.Map<ProjectDTO,Project> (data);
+			if (dataDto is null)
+				AppError.Create("Hubo problemas al mappear la request")
+					.BuildResponse<ProjectDTO>(HttpStatusCode.InternalServerError)
+					.Throw();
+
+			return new(dataDto, HttpStatusCode.OK);
+		}
+
 	}
 }

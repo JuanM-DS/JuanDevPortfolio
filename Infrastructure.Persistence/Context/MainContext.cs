@@ -5,9 +5,9 @@ namespace Infrastructure.Persistence.Context
 {
     public class MainContext : DbContext
     {
-        public DbSet<CommentReferences> CommentReferences { get; set; }
-        public DbSet<Experience> Experiences { get; set; }
-        public DbSet<ExperienceDetail> ExperienceDetails { get; set; }
+        public DbSet<CommentReference> CommentReferences { get; set; }
+        public DbSet<WorkExperience> Experiences { get; set; }
+        public DbSet<WorkExperienceDetail> ExperienceDetails { get; set; }
         public DbSet<Profile> Profiles { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectImage> ProjectImages { get; set; }

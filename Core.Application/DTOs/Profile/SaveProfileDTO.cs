@@ -7,6 +7,7 @@
         string ProfileImageUrl,
         string GitHubRepositoryUrl,
         string LinkedinUrl,
-        string CvUrl
-    );
+        string CvUrl,
+		Guid AccountId
+	);
 }

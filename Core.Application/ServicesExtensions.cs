@@ -12,8 +12,8 @@ namespace Core.Application
 		{
             #region DI
             service.AddScoped<ICommentReferencesServices, CommentReferencesServices>();
-            service.AddScoped<IExperienceServices, ExperienceServices>();
-            service.AddScoped<IExperienceDetailServices, ExperienceDetailServices>();
+            service.AddScoped<IWorkExperienceServices, WorkExperienceServices>();
+            service.AddScoped<IWorkExperienceDetailServices, WorkExperienceDetailServices>();
             service.AddScoped<IProfileServices, ProfileServices>();
             service.AddScoped<IProjectServices, ProjectServices>();
             service.AddScoped<IProjectImageServices, ProjectImageServices>();

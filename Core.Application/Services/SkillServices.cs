@@ -11,11 +11,13 @@ namespace Core.Application.Services
 {
 	public class SkillServices : BaseServices<Skill, SkillDTO, SaveSkillDTO>, ISkillServices
     {
+		private readonly ISkillRepository repo;
 		private readonly ITechnologyItemRepository technologyItemRepo;
 
 		public SkillServices(ISkillRepository repo, IMapper mapper, ITechnologyItemRepository TechnologyItemRepo)
             : base(repo, mapper)
 		{
+			this.repo = repo;
 			technologyItemRepo = TechnologyItemRepo;
 		}
 
@@ -44,6 +46,21 @@ namespace Core.Application.Services
 					.Throw();
 
 			return new(HttpStatusCode.OK);
+		}
+
+		public AppResponse<List<SkillDTO>> GetAll(SkillFilter filter)
+		{
+			var data = repo.GetAll(filter).ToList();
+			if (data is null || !data.Any())
+				return new(HttpStatusCode.NoContent, "No hay elementos para mostrar");
+
+			var dataDto = _mapper.Map<SkillDTO, Skill>(data);
+			if (dataDto is null)
+				AppError.Create("Hubo problemas al mappear la request")
+					.BuildResponse<SkillDTO>(HttpStatusCode.InternalServerError)
+					.Throw();
+
+			return new(dataDto, HttpStatusCode.OK);
 		}
 	}
 }

@@ -3,7 +3,7 @@ using Core.Application.DTOs.TTechnologyItem;
 
 namespace Core.Application.DTOs.Experience
 {
-    public record SaveExperienceDTO
+    public record SaveWorkExperienceDTO
     {
 		public string Position { get; set; } = string.Empty;
 		public string CompanyName { get; set; } = string.Empty;
@@ -13,6 +13,6 @@ namespace Core.Application.DTOs.Experience
 		public string ImageUrl { get; set; } = string.Empty;
 		public Guid ProfileId { get; set; }
 		public List<TechnologyItemDTO> TechnologyItems { get; set; } = [];
-		public List<SaveExperienceDetailDTO> ExperienceDetail { get; set; } = [];
+		public List<SaveWorkExperienceDetailDTO> ExperienceDetail { get; set; } = [];
 	}
 }

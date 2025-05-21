@@ -9,13 +9,15 @@ using System.Net;
 
 namespace Core.Application.Services
 {
-	public class ExperienceServices : BaseServices<Experience, ExperienceDTO, SaveExperienceDTO>, IExperienceServices
+	public class WorkExperienceServices : BaseServices<WorkExperience, WorkExperienceDTO, SaveWorkExperienceDTO>, IWorkExperienceServices
     {
+		private readonly IWorkExperienceRepository repo;
 		private readonly ITechnologyItemRepository technologyItemRepo;
 
-		public ExperienceServices(IExperienceRepository repo, IMapper mapper, ITechnologyItemRepository TechnologyItemRepo)
+		public WorkExperienceServices(IWorkExperienceRepository repo, IMapper mapper, ITechnologyItemRepository TechnologyItemRepo)
             : base(repo, mapper)
 		{
+			this.repo = repo;
 			technologyItemRepo = TechnologyItemRepo;
 		}
 
@@ -44,5 +46,21 @@ namespace Core.Application.Services
 
 			return new(HttpStatusCode.OK);
 		}
+
+		public AppResponse<List<WorkExperienceDTO>> GetAll(WorkExperienceFilter filter)
+		{
+			var data = repo.GetAll(filter).ToList();
+			if (data is null || !data.Any())
+				return new(HttpStatusCode.NoContent, "No hay elementos para mostrar");
+
+			var dataDto = _mapper.Map<WorkExperienceDTO, WorkExperience>(data);
+			if (dataDto is null)
+				AppError.Create("Hubo problemas al mappear la request")
+					.BuildResponse<WorkExperienceDTO>(HttpStatusCode.InternalServerError)
+					.Throw();
+
+			return new(dataDto, HttpStatusCode.OK);
+		}
+
 	}
 }

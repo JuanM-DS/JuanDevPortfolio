@@ -80,7 +80,9 @@ namespace Core.Application.Helpers
                             source.ProfileImageUrl,
                             source.GitHubRepositoryUrl,
                             source.LinkedinUrl,
-                            source.CvUrl);
+                            source.CvUrl,
+                            source.AccountId
+                            );
                     }
                 }
             };

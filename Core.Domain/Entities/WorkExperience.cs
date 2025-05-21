@@ -2,7 +2,7 @@
 
 namespace Core.Domain.Entities
 {
-	public class Experience : BaseEntity, IAuditableProperties
+	public class WorkExperience : BaseEntity, IAuditableProperties
 	{
 		public string CreatedBy { get; set; } = string.Empty;
 		public DateTime Created { get; set; }
@@ -19,6 +19,6 @@ namespace Core.Domain.Entities
 
 		public Profile Profile { get; set; } = null!;
 		public ICollection<TechnologyItem> TechnologyItems { get; set; } = [];
-		public ICollection<ExperienceDetail> ExperienceDetails { get; set; } = [];
+		public ICollection<WorkExperienceDetail> ExperienceDetails { get; set; } = [];
 	}
 }

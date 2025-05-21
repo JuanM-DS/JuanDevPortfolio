@@ -1,6 +1,6 @@
 ﻿namespace Core.Application.DTOs.Experience
 {
-    public record ExperienceDTO(
+    public record WorkExperienceDTO(
         Guid Id,
         string Position,
         string CompanyName,

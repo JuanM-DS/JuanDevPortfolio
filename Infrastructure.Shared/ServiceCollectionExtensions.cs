@@ -15,6 +15,7 @@ namespace Infrastructure.Shared
 			service.AddScoped<IEmailServices, EmailServices>();
 			service.AddScoped<ITemplateServices, TemplateServices>();
 			service.AddSingleton<IHttpContextProvider, HttpContextProvider>();
+			service.AddSingleton<IEncryptationServices, EncryptationServices>();
 			service.AddSingleton<IUriServices>(p =>
 			{
 				var accesor = p.GetRequiredService<IHttpContextAccessor>();
