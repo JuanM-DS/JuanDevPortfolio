@@ -1,4 +1,4 @@
-﻿using Core.Application.DTOs.ProjectImage;
+﻿using Core.Application.DTOs.ExperienceDetail;
 using Core.Application.Interfaces.Helpers;
 using Core.Application.Interfaces.Repositories;
 using Core.Application.Interfaces.Services;
@@ -9,26 +9,26 @@ using System.Net;
 
 namespace Core.Application.Services
 {
-    public class ProjectImageServices : BaseServices<ProjectImage, ProjectImageDTO, SaveProjectImageDTO>, IProjectImageServices
+    public class WorkExperienceDetailServices : BaseServices<WorkExperienceDetail, WorkExperienceDetailDTO, SaveWorkExperienceDetailDTO>, IWorkExperienceDetailServices
     {
-		private readonly IProjectImageRepository repo;
+		private readonly IWorkExperienceDetailRepository repo;
 
-		public ProjectImageServices(IProjectImageRepository repo, IMapper mapper)
+		public WorkExperienceDetailServices(IWorkExperienceDetailRepository repo, IMapper mapper)
             : base(repo, mapper)
 		{
 			this.repo = repo;
 		}
 
-		public AppResponse<List<ProjectImageDTO>> GetAll(ProjectImageFilter filter)
+		public AppResponse<List<WorkExperienceDetailDTO>> GetAll(WorkExperienceDetailFilter filter)
 		{
 			var data = repo.GetAll(filter).ToList();
 			if (data is null || !data.Any())
 				return new(HttpStatusCode.NoContent, "No hay elementos para mostrar");
 
-			var dataDto = _mapper.Map<ProjectImageDTO, ProjectImage>(data);
+			var dataDto = _mapper.Map<WorkExperienceDetailDTO, WorkExperienceDetail>(data);
 			if (dataDto is null)
 				AppError.Create("Hubo problemas al mappear la request")
-					.BuildResponse<ProjectImageDTO>(HttpStatusCode.InternalServerError)
+					.BuildResponse<WorkExperienceDetailDTO>(HttpStatusCode.InternalServerError)
 					.Throw();
 
 			return new(dataDto, HttpStatusCode.OK);

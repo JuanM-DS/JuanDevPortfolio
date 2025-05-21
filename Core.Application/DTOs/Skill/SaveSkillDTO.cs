@@ -1,8 +1,12 @@
-﻿namespace Core.Application.DTOs.Skill
+﻿using Core.Application.DTOs.TTechnologyItem;
+
+namespace Core.Application.DTOs.Skill
 {
-    public record SaveSkillDTO(
-        string Title,
-        string Descripcion,
-        Guid ProfileId
-    );
+    public class SaveSkillDTO
+    {
+		public string Title { get; set; } = string.Empty;
+		public string Descripcion { get; set; } = string.Empty;
+		public Guid ProfileId { get; set; }
+		public List<SaveTechnologyItemDTO> TechnologyItems { get; set; } = [];
+	}
 }

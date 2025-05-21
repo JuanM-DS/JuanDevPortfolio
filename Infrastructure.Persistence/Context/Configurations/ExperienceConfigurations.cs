@@ -1,15 +1,14 @@
 ﻿using Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure;
 
 namespace Infrastructure.Persistence.Context.Configurations
 {
-	public class ExperienceConfigurations : IEntityTypeConfiguration<Experience>
+	public class ExperienceConfigurations : IEntityTypeConfiguration<WorkExperience>
 	{
-		public void Configure(EntityTypeBuilder<Experience> builder)
+		public void Configure(EntityTypeBuilder<WorkExperience> builder)
 		{
-			builder.ToTable("Experiences");
+			builder.ToTable("WorkExperience");
 			builder.HasKey(x => x.Id);
 
 			builder.Property(x => x.Id)
@@ -46,25 +45,25 @@ namespace Infrastructure.Persistence.Context.Configurations
 			builder.HasMany(x => x.ExperienceDetails)
 				.WithOne(x => x.Experience)
 				.HasForeignKey(x => x.ExperienceId)
-				.HasConstraintName("FK_ExpDet_Experience");
+				.HasConstraintName("FK_ExpDet_WorkExperience");
 
 			builder.HasMany(e => e.TechnologyItems)
 					.WithMany()
 					.UsingEntity<Dictionary<string, object>>(
-						"ExperienceTechnology", 
+						"WorkExperienceTechnology", 
 						j => j
 							.HasOne<TechnologyItem>()
 							.WithMany()
 							.HasForeignKey("TechnologyId") 
-							.HasConstraintName("FK_ExpTec_Technology"), 
+							.HasConstraintName("FK_WExpTec_Technology"), 
 						j => j
-							.HasOne<Experience>()
+							.HasOne<WorkExperience>()
 							.WithMany()
-							.HasForeignKey("ExperienceId") 
-							.HasConstraintName("FK_ExpTec_Experience"),
+							.HasForeignKey("WorkExperienceId") 
+							.HasConstraintName("FK_WExpTec_WorkExperience"),
 						j => j
-							.HasKey("ExperienceId", "TechnologyId") 
-							.HasName("PK_ExpTechnology") 
+							.HasKey("WorkExperienceId", "TechnologyId") 
+							.HasName("PK_WExpTechnology") 
 					);
 
 			#region AuditableProperties

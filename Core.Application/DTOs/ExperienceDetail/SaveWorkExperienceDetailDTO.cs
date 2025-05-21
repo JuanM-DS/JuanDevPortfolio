@@ -1,6 +1,6 @@
 ﻿namespace Core.Application.DTOs.ExperienceDetail
 {
-    public record SaveExperienceDetailDTO(
+    public record SaveWorkExperienceDetailDTO(
     string Title,
     string Descripcion,
     Guid ExperienceId

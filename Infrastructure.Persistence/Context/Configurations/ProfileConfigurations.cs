@@ -23,7 +23,10 @@ namespace Infrastructure.Persistence.Context.Configurations
                 .IsRequired()
                 .HasMaxLength(200);
 
-            builder.Property(x => x.Description)
+			builder.Property(x => x.AccountId)
+				.IsRequired();
+
+			builder.Property(x => x.Description)
                 .IsRequired()
                 .HasMaxLength(500);
 

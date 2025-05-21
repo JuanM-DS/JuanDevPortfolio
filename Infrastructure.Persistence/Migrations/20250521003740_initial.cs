@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -26,7 +26,8 @@ namespace Infrastructure.Persistence.Migrations
                     ProfileImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     GitHubRepositoryUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     LinkedinUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    CvUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
+                    CvUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -53,7 +54,7 @@ namespace Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Comment_References",
+                name: "Comment_Reference",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
@@ -64,41 +65,14 @@ namespace Infrastructure.Persistence.Migrations
                     PersonName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ProfileImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Comment = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    ProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsConfirmed = table.Column<bool>(type: "bit", nullable: false, defaultValueSql: "false")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Comment_References", x => x.Id);
+                    table.PrimaryKey("PK_Comment_Reference", x => x.Id);
                     table.ForeignKey(
                         name: "FK_CommentRef_Profile",
-                        column: x => x.ProfileId,
-                        principalTable: "Profiles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Experiences",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
-                    CreatedBy = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedBy = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Updated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Position = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    CompanyName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    FromDate = table.Column<DateTime>(type: "Date", nullable: false),
-                    ToDate = table.Column<DateTime>(type: "Date", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    ProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Experiences", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Experiences_Profile",
                         column: x => x.ProfileId,
                         principalTable: "Profiles",
                         principalColumn: "Id",
@@ -155,7 +129,7 @@ namespace Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Experience_Details",
+                name: "WorkExperience",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
@@ -163,41 +137,21 @@ namespace Infrastructure.Persistence.Migrations
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Updated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    ExperienceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Position = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    CompanyName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    FromDate = table.Column<DateTime>(type: "Date", nullable: false),
+                    ToDate = table.Column<DateTime>(type: "Date", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    ProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Experience_Details", x => x.Id);
+                    table.PrimaryKey("PK_WorkExperience", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ExpDet_Experience",
-                        column: x => x.ExperienceId,
-                        principalTable: "Experiences",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ExperienceTechnology",
-                columns: table => new
-                {
-                    ExperienceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TechnologyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ExpTechnology", x => new { x.ExperienceId, x.TechnologyId });
-                    table.ForeignKey(
-                        name: "FK_ExpTec_Experience",
-                        column: x => x.ExperienceId,
-                        principalTable: "Experiences",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ExpTec_Technology",
-                        column: x => x.TechnologyId,
-                        principalTable: "Technology_Items",
+                        name: "FK_Experiences_Profile",
+                        column: x => x.ProfileId,
+                        principalTable: "Profiles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -273,25 +227,58 @@ namespace Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "WorkExperience_Details",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
+                    CreatedBy = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Updated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    ExperienceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkExperience_Details", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ExpDet_WorkExperience",
+                        column: x => x.ExperienceId,
+                        principalTable: "WorkExperience",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WorkExperienceTechnology",
+                columns: table => new
+                {
+                    WorkExperienceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TechnologyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WExpTechnology", x => new { x.WorkExperienceId, x.TechnologyId });
+                    table.ForeignKey(
+                        name: "FK_WExpTec_Technology",
+                        column: x => x.TechnologyId,
+                        principalTable: "Technology_Items",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WExpTec_WorkExperience",
+                        column: x => x.WorkExperienceId,
+                        principalTable: "WorkExperience",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_Comment_References_ProfileId",
-                table: "Comment_References",
+                name: "IX_Comment_Reference_ProfileId",
+                table: "Comment_Reference",
                 column: "ProfileId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Experience_Details_ExperienceId",
-                table: "Experience_Details",
-                column: "ExperienceId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Experiences_ProfileId",
-                table: "Experiences",
-                column: "ProfileId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ExperienceTechnology_TechnologyId",
-                table: "ExperienceTechnology",
-                column: "TechnologyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Project_Images_ProjectId",
@@ -317,19 +304,28 @@ namespace Infrastructure.Persistence.Migrations
                 name: "IX_SkillTechnology_TechnologyId",
                 table: "SkillTechnology",
                 column: "TechnologyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkExperience_ProfileId",
+                table: "WorkExperience",
+                column: "ProfileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkExperience_Details_ExperienceId",
+                table: "WorkExperience_Details",
+                column: "ExperienceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkExperienceTechnology_TechnologyId",
+                table: "WorkExperienceTechnology",
+                column: "TechnologyId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Comment_References");
-
-            migrationBuilder.DropTable(
-                name: "Experience_Details");
-
-            migrationBuilder.DropTable(
-                name: "ExperienceTechnology");
+                name: "Comment_Reference");
 
             migrationBuilder.DropTable(
                 name: "Project_Images");
@@ -341,7 +337,10 @@ namespace Infrastructure.Persistence.Migrations
                 name: "SkillTechnology");
 
             migrationBuilder.DropTable(
-                name: "Experiences");
+                name: "WorkExperience_Details");
+
+            migrationBuilder.DropTable(
+                name: "WorkExperienceTechnology");
 
             migrationBuilder.DropTable(
                 name: "Projects");
@@ -351,6 +350,9 @@ namespace Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Technology_Items");
+
+            migrationBuilder.DropTable(
+                name: "WorkExperience");
 
             migrationBuilder.DropTable(
                 name: "Profiles");

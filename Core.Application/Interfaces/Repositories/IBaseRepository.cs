@@ -13,5 +13,10 @@ namespace Core.Application.Interfaces.Repositories
 		public IEnumerable<TEntity> GetAll();
 		public Task<TEntity?> GetByIdAsync(Guid id, params Expression<Func<TEntity, object>> [] properties);
 		public IEnumerable<TEntity> GetAll(params Expression<Func<TEntity, object>>[] properties);
+
+		public Task<TEntity?> GetByIdAsNoTrackingAsync(Guid id);
+		public IEnumerable<TEntity> GetAllAsNoTracking();
+		public Task<TEntity?> GetByIdAsNoTrackingAsync(Guid id, params Expression<Func<TEntity, object>>[] properties);
+		public IEnumerable<TEntity> GetAllAsNoTracking(params Expression<Func<TEntity, object>>[] properties);
 	}
 }

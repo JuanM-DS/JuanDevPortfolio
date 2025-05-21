@@ -52,12 +52,12 @@ namespace Infrastructure.Persistence.Repositories
 
         public IEnumerable<TEntity> GetAll()
         {
-            return _entity.AsNoTracking().AsEnumerable();
+            return _entity.AsEnumerable();
         }
 
         public IEnumerable<TEntity> GetAll(params Expression<Func<TEntity, object>>[] properties)
         {
-            var query = _entity.AsNoTracking().AsQueryable();
+            var query = _entity.AsQueryable();
 
             foreach (var item in properties)
             {
@@ -69,12 +69,12 @@ namespace Infrastructure.Persistence.Repositories
 
         public async Task<TEntity?> GetByIdAsync(Guid id)
         {
-            return await _entity.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            return await _entity.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<TEntity?> GetByIdAsync(Guid id, params Expression<Func<TEntity, object>>[] properties)
         {
-            var query = _entity.AsNoTracking().AsQueryable();
+            var query = _entity.AsQueryable();
 
             foreach (var item in properties)
             {
@@ -98,5 +98,40 @@ namespace Infrastructure.Persistence.Repositories
                 return false;
             }
         }
-    }
+
+		public IEnumerable<TEntity> GetAllAsNoTracking()
+		{
+			return _entity.AsNoTracking().AsEnumerable();
+		}
+
+		public IEnumerable<TEntity> GetAllAsNoTracking(params Expression<Func<TEntity, object>>[] properties)
+		{
+			var query = _entity.AsNoTracking().AsQueryable();
+
+			foreach (var item in properties)
+			{
+				query = query.Include(item);
+			}
+
+			return query.AsEnumerable();
+		}
+
+		public async Task<TEntity?> GetByIdAsNoTrackingAsync(Guid id)
+		{
+			return await _entity.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+		}
+
+		public async Task<TEntity?> GetByIdAsNoTrackingAsync(Guid id, params Expression<Func<TEntity, object>>[] properties)
+		{
+			var query = _entity.AsNoTracking().AsQueryable();
+
+			foreach (var item in properties)
+			{
+				query = query.Include(item);
+			}
+
+			return await query.FirstOrDefaultAsync(x => x.Id == id);
+		}
+
+	}
 }

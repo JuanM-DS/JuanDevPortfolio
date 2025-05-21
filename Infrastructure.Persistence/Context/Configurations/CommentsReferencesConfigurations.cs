@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistence.Context.Configurations
 {
-    public class CommentsReferencesConfigurations : IEntityTypeConfiguration<CommentReferences>
+    public class CommentsReferencesConfigurations : IEntityTypeConfiguration<CommentReference>
     {
-        public void Configure(EntityTypeBuilder<CommentReferences> builder)
+        public void Configure(EntityTypeBuilder<CommentReference> builder)
         {
-            builder.ToTable("Comment_References");
+            builder.ToTable("Comment_Reference");
             builder.HasKey(x=>x.Id);
 
             builder.Property(x => x.Id)
@@ -30,8 +30,12 @@ namespace Infrastructure.Persistence.Context.Configurations
             builder.Property(x => x.ProfileId)
                 .IsRequired();
 
-            #region AuditableProperties
-            builder.Property(x => x.CreatedBy)
+			builder.Property(x => x.IsConfirmed)
+                .HasDefaultValueSql("false")
+				.IsRequired();
+
+			#region AuditableProperties
+			builder.Property(x => x.CreatedBy)
                 .IsRequired()
                 .HasMaxLength(200);
 

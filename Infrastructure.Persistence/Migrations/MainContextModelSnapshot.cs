@@ -22,7 +22,7 @@ namespace Infrastructure.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Core.Domain.Entities.CommentReferences", b =>
+            modelBuilder.Entity("Core.Domain.Entities.CommentReference", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -41,6 +41,11 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsConfirmed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValueSql("false");
 
                     b.Property<string>("PersonName")
                         .IsRequired()
@@ -66,109 +71,7 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("ProfileId");
 
-                    b.ToTable("Comment_References", (string)null);
-                });
-
-            modelBuilder.Entity("Core.Domain.Entities.Experience", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("NewId()");
-
-                    b.Property<string>("CompanyName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("FromDate")
-                        .HasColumnType("Date");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Position")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<Guid>("ProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ToDate")
-                        .HasColumnType("Date");
-
-                    b.Property<DateTime>("Updated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProfileId");
-
-                    b.ToTable("Experiences", (string)null);
-                });
-
-            modelBuilder.Entity("Core.Domain.Entities.ExperienceDetail", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("NewId()");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<Guid>("ExperienceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("Updated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExperienceId");
-
-                    b.ToTable("Experience_Details", (string)null);
+                    b.ToTable("Comment_Reference", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Profile", b =>
@@ -177,6 +80,9 @@ namespace Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("NewId()");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -410,20 +316,106 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Technology_Items", (string)null);
                 });
 
-            modelBuilder.Entity("ExperienceTechnology", b =>
+            modelBuilder.Entity("Core.Domain.Entities.WorkExperience", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NewId()");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("FromDate")
+                        .HasColumnType("Date");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid>("ProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ToDate")
+                        .HasColumnType("Date");
+
+                    b.Property<DateTime>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfileId");
+
+                    b.ToTable("WorkExperience", (string)null);
+                });
+
+            modelBuilder.Entity("Core.Domain.Entities.WorkExperienceDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NewId()");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<Guid>("ExperienceId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TechnologyId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("ExperienceId", "TechnologyId")
-                        .HasName("PK_ExpTechnology");
+                    b.Property<DateTime>("Updated")
+                        .HasColumnType("datetime2");
 
-                    b.HasIndex("TechnologyId");
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
-                    b.ToTable("ExperienceTechnology");
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExperienceId");
+
+                    b.ToTable("WorkExperience_Details", (string)null);
                 });
 
             modelBuilder.Entity("ProjectTechnology", b =>
@@ -456,7 +448,23 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("SkillTechnology", (string)null);
                 });
 
-            modelBuilder.Entity("Core.Domain.Entities.CommentReferences", b =>
+            modelBuilder.Entity("WorkExperienceTechnology", b =>
+                {
+                    b.Property<Guid>("WorkExperienceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TechnologyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("WorkExperienceId", "TechnologyId")
+                        .HasName("PK_WExpTechnology");
+
+                    b.HasIndex("TechnologyId");
+
+                    b.ToTable("WorkExperienceTechnology");
+                });
+
+            modelBuilder.Entity("Core.Domain.Entities.CommentReference", b =>
                 {
                     b.HasOne("Core.Domain.Entities.Profile", "Profile")
                         .WithMany("ComenntReferences")
@@ -466,30 +474,6 @@ namespace Infrastructure.Persistence.Migrations
                         .HasConstraintName("FK_CommentRef_Profile");
 
                     b.Navigation("Profile");
-                });
-
-            modelBuilder.Entity("Core.Domain.Entities.Experience", b =>
-                {
-                    b.HasOne("Core.Domain.Entities.Profile", "Profile")
-                        .WithMany("Experiences")
-                        .HasForeignKey("ProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Experiences_Profile");
-
-                    b.Navigation("Profile");
-                });
-
-            modelBuilder.Entity("Core.Domain.Entities.ExperienceDetail", b =>
-                {
-                    b.HasOne("Core.Domain.Entities.Experience", "Experience")
-                        .WithMany("ExperienceDetails")
-                        .HasForeignKey("ExperienceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_ExpDet_Experience");
-
-                    b.Navigation("Experience");
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Project", b =>
@@ -528,21 +512,28 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Profile");
                 });
 
-            modelBuilder.Entity("ExperienceTechnology", b =>
+            modelBuilder.Entity("Core.Domain.Entities.WorkExperience", b =>
                 {
-                    b.HasOne("Core.Domain.Entities.Experience", null)
-                        .WithMany()
+                    b.HasOne("Core.Domain.Entities.Profile", "Profile")
+                        .WithMany("Experiences")
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Experiences_Profile");
+
+                    b.Navigation("Profile");
+                });
+
+            modelBuilder.Entity("Core.Domain.Entities.WorkExperienceDetail", b =>
+                {
+                    b.HasOne("Core.Domain.Entities.WorkExperience", "Experience")
+                        .WithMany("ExperienceDetails")
                         .HasForeignKey("ExperienceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_ExpTec_Experience");
+                        .HasConstraintName("FK_ExpDet_WorkExperience");
 
-                    b.HasOne("Core.Domain.Entities.TechnologyItem", null)
-                        .WithMany()
-                        .HasForeignKey("TechnologyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_ExpTec_Technology");
+                    b.Navigation("Experience");
                 });
 
             modelBuilder.Entity("ProjectTechnology", b =>
@@ -579,9 +570,21 @@ namespace Infrastructure.Persistence.Migrations
                         .HasConstraintName("FK_SkillTec_Technology");
                 });
 
-            modelBuilder.Entity("Core.Domain.Entities.Experience", b =>
+            modelBuilder.Entity("WorkExperienceTechnology", b =>
                 {
-                    b.Navigation("ExperienceDetails");
+                    b.HasOne("Core.Domain.Entities.TechnologyItem", null)
+                        .WithMany()
+                        .HasForeignKey("TechnologyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_WExpTec_Technology");
+
+                    b.HasOne("Core.Domain.Entities.WorkExperience", null)
+                        .WithMany()
+                        .HasForeignKey("WorkExperienceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_WExpTec_WorkExperience");
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Profile", b =>
@@ -598,6 +601,11 @@ namespace Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Core.Domain.Entities.Project", b =>
                 {
                     b.Navigation("ProjectImages");
+                });
+
+            modelBuilder.Entity("Core.Domain.Entities.WorkExperience", b =>
+                {
+                    b.Navigation("ExperienceDetails");
                 });
 #pragma warning restore 612, 618
         }

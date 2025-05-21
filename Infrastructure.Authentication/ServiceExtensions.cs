@@ -1,11 +1,15 @@
-﻿using Infrastructure.Authentication.Context;
+﻿using Core.Application.Wrappers;
+using Core.Domain.Entities;
+using Infrastructure.Authentication.Context;
 using Infrastructure.Authentication.CustomEntities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Net;
 using System.Text;
 
 namespace Infrastructure.Authentication
@@ -44,6 +48,29 @@ namespace Infrastructure.Authentication
                     ValidAudience = confi.GetSection("JwtSettings")["Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(confi.GetSection("JwtSettings")["ScretKey"]!)),
                     ClockSkew = TimeSpan.Zero
+                };
+                option.Events = new JwtBearerEvents()
+                {
+                    OnAuthenticationFailed = x =>
+                    {
+                        x.NoResult();
+                        x.Response.ContentType = "application/json";
+                        x.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        return x.Response.WriteAsJsonAsync(AppError.Create(x.Exception.Message).BuildResponse<Empty>(HttpStatusCode.InternalServerError));
+                    },
+                    OnChallenge = x =>
+                    {
+                        x.HandleResponse();
+                        x.Response.ContentType = "application/json";
+                        x.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                        return x.Response.WriteAsJsonAsync(AppError.Create("No estas authenticado para utilizar el recurso").BuildResponse<Empty>(HttpStatusCode.Unauthorized));
+					},
+                    OnForbidden = x =>
+                    {
+						x.Response.ContentType = "application/json";
+						x.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+						return x.Response.WriteAsJsonAsync(AppError.Create("No estas authorizado para utilizar el recurso").BuildResponse<Empty>(HttpStatusCode.Unauthorized));
+					}
                 };
             });
                

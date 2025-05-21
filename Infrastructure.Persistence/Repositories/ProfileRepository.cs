@@ -1,4 +1,5 @@
 ﻿using Core.Application.Interfaces.Repositories;
+using Core.Application.QueryFilters;
 using Core.Domain.Entities;
 using Infrastructure.Persistence.Context;
 
@@ -9,7 +10,21 @@ namespace Infrastructure.Persistence.Repositories
         public ProfileRepository(MainContext context)
             : base(context)
         { }
-    }
 
+		public IEnumerable<Profile> GetAll(ProfileFilter filter)
+		{
+			var query = _entity.AsQueryable();
 
+			if (!string.IsNullOrWhiteSpace(filter.Name))
+				query = query.Where(x => x.Name.Contains(filter.Name));
+
+			if (!string.IsNullOrWhiteSpace(filter.ProfesionalTitle))
+				query = query.Where(x => x.ProfesionalTitle.Contains(filter.ProfesionalTitle));
+
+			if (filter.AccountId is not null)
+				query = query.Where(x => x.AccountId == filter.AccountId);
+
+			return query.AsEnumerable();
+		}
+	}
 }

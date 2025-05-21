@@ -1,4 +1,4 @@
-﻿using Core.Application.DTOs.Skill;
+﻿using Core.Application.DTOs.Experience;
 using Core.Application.Interfaces.Helpers;
 using Core.Application.Interfaces.Repositories;
 using Core.Application.Interfaces.Services;
@@ -9,27 +9,26 @@ using System.Net;
 
 namespace Core.Application.Services
 {
-	public class SkillServices : BaseServices<Skill, SkillDTO, SaveSkillDTO>, ISkillServices
+	public class WorkExperienceServices : BaseServices<WorkExperience, WorkExperienceDTO, SaveWorkExperienceDTO>, IWorkExperienceServices
     {
-		private readonly ISkillRepository repo;
+		private readonly IWorkExperienceRepository repo;
 		private readonly ITechnologyItemRepository technologyItemRepo;
 
-		public SkillServices(ISkillRepository repo, IMapper mapper, ITechnologyItemRepository TechnologyItemRepo)
+		public WorkExperienceServices(IWorkExperienceRepository repo, IMapper mapper, ITechnologyItemRepository TechnologyItemRepo)
             : base(repo, mapper)
 		{
 			this.repo = repo;
 			technologyItemRepo = TechnologyItemRepo;
 		}
 
-		public async Task<AppResponse<Empty>> AddTechnologyItemsAsync(Guid SkillId, List<Guid> itemsId)
+		public async Task<AppResponse<Empty>> AddTechnologyItemsAsync(Guid ExperienceId, List<Guid> itemsId)
 		{
-
-			var skillTask = _repo.GetByIdAsync(SkillId, x=>x.TechnologyItems);
+            var experiencTask = _repo.GetByIdAsync(ExperienceId, x => x.TechnologyItems);
 			var TechnologyItems = technologyItemRepo.GetAll(new TechnologyItemFilter() { Ids = itemsId }).ToList();
-			var skills = await skillTask;
+			var experience = await experiencTask;
 
-			if (skills is null)
-				AppError.Create("No se encontró ninguna habilidad con el Id enviado")
+			if(experience is null)
+				AppError.Create("No se encontró ninguna experiencia laboral con el Id enviado")
 					.BuildResponse<Empty>(HttpStatusCode.BadRequest)
 					.Throw();
 
@@ -38,8 +37,8 @@ namespace Core.Application.Services
 					.BuildResponse<Empty>(HttpStatusCode.BadRequest)
 					.Throw();
 
-			skills!.TechnologyItems.ToList().AddRange(TechnologyItems);
-			var result = await _repo.UpdateAsync(skills);
+			experience!.TechnologyItems.ToList().AddRange(TechnologyItems);
+			var result = await _repo.UpdateAsync(experience);
 			if (result)
 				AppError.Create("Hubo un problema al registrar los Ítem")
 					.BuildResponse<Empty>(HttpStatusCode.BadRequest)
@@ -48,19 +47,20 @@ namespace Core.Application.Services
 			return new(HttpStatusCode.OK);
 		}
 
-		public AppResponse<List<SkillDTO>> GetAll(SkillFilter filter)
+		public AppResponse<List<WorkExperienceDTO>> GetAll(WorkExperienceFilter filter)
 		{
 			var data = repo.GetAll(filter).ToList();
 			if (data is null || !data.Any())
 				return new(HttpStatusCode.NoContent, "No hay elementos para mostrar");
 
-			var dataDto = _mapper.Map<SkillDTO, Skill>(data);
+			var dataDto = _mapper.Map<WorkExperienceDTO, WorkExperience>(data);
 			if (dataDto is null)
 				AppError.Create("Hubo problemas al mappear la request")
-					.BuildResponse<SkillDTO>(HttpStatusCode.InternalServerError)
+					.BuildResponse<WorkExperienceDTO>(HttpStatusCode.InternalServerError)
 					.Throw();
 
 			return new(dataDto, HttpStatusCode.OK);
 		}
+
 	}
 }

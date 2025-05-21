@@ -17,10 +17,11 @@ namespace Core.Domain.Entities
 		public string GitHubRepositoryUrl { get; set; } = string.Empty;
 		public string LinkedinUrl { get; set; } = string.Empty;
 		public string CvUrl { get; set; } = string.Empty;
+		public Guid AccountId { get; set; }
 
-		public ICollection<CommentReferences> ComenntReferences { get; set; } = [];
+		public ICollection<CommentReference> ComenntReferences { get; set; } = [];
 		public ICollection<Skill> Skills { get; set; } = [];
-		public ICollection<Experience> Experiences { get; set; } = [];
+		public ICollection<WorkExperience> Experiences { get; set; } = [];
 		public ICollection<Project> Projects { get; set; } = [];
 	}
 }
