@@ -3,6 +3,7 @@ using Core.Application.DTOs.Email;
 using Core.Application.DTOs.Email.TempleteViewModels;
 using Core.Application.Interfaces.Helpers;
 using Core.Application.Interfaces.Services;
+using Core.Application.Interfaces.Shared;
 using Core.Application.Wrappers;
 using Core.Domain.Entities;
 using Core.Domain.Enumerables;

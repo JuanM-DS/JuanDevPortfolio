@@ -1,4 +1,4 @@
-﻿namespace Core.Application.Interfaces.Helpers
+﻿namespace Core.Application.Interfaces.Shared
 {
 	public interface IEncryptationServices
 	{

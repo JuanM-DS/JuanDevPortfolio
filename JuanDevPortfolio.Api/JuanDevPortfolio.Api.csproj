@@ -26,10 +26,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Images\Account\" />
-    <Folder Include="Images\companyLogo\" />
-    <Folder Include="Images\Project\" />
-    <Folder Include="Images\Profile\" />
+    <Folder Include="Media\" />
+    <Folder Include="Media\Images\User\" />
+    <Folder Include="Media\Images\companyLogo\" />
+    <Folder Include="Media\Images\Project\" />
+    <Folder Include="Media\Images\Profile\" />
   </ItemGroup>
 
 </Project>

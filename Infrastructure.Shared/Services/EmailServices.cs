@@ -1,5 +1,6 @@
 ﻿using Core.Application.DTOs.Email;
 using Core.Application.Interfaces.Helpers;
+using Core.Application.Interfaces.Shared;
 using Core.Domain.Enumerables;
 using Core.Domain.Settings;
 using MailKit.Net.Smtp;
