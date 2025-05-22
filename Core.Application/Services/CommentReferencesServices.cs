@@ -19,6 +19,24 @@ namespace Core.Application.Services
 			this.repo = repo;
 		}
 
+		public async Task<AppResponse<Empty>> ConfirmCommentReferenceAsync(Guid Id)
+		{
+			var commentReference = await repo.GetByIdAsNoTrackingAsync(Id);
+			if (commentReference is null)
+				AppError.Create($"No existe un comment reference con el id: {Id}")
+					.BuildResponse<Empty>(HttpStatusCode.BadRequest)
+					.Throw();
+
+			commentReference!.IsConfirmed = true;
+			var result = await repo.UpdateAsync(commentReference);
+			if (result)
+				AppError.Create("Hubo un problema al cambiar el estado de confirmacion del comentario")
+					.BuildResponse<Empty>(HttpStatusCode.InternalServerError)
+					.Throw();
+
+			return new(HttpStatusCode.OK);
+		}
+
 		public AppResponse<List<CommentReferenceDTO>> GetAll(CommentReferenceFilter filter)
 		{
 			var data = repo.GetAll(filter).ToList();
