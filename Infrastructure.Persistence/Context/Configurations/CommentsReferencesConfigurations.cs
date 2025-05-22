@@ -31,7 +31,7 @@ namespace Infrastructure.Persistence.Context.Configurations
                 .IsRequired();
 
 			builder.Property(x => x.IsConfirmed)
-                .HasDefaultValueSql("false")
+                .HasDefaultValue(false)
 				.IsRequired();
 
 			#region AuditableProperties

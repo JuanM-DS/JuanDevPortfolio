@@ -66,7 +66,7 @@ namespace Infrastructure.Persistence.Migrations
                     ProfileImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Comment = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     ProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsConfirmed = table.Column<bool>(type: "bit", nullable: false, defaultValueSql: "false")
+                    IsConfirmed = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {

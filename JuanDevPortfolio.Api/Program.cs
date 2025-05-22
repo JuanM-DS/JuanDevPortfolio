@@ -1,4 +1,5 @@
 using Core.Domain.Enumerables;
+using Infrastructure.Authentication;
 using Infrastructure.Persistence;
 using Infrastructure.Shared;
 using JuanDevPortfolio.Api.Middlewares;
@@ -11,8 +12,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSharedLayer(builder.Configuration)
-	.AddPersistenceLayer(builder.Configuration);
-	//.AddAuthenticationLayer(builder.Configuration);
+	.AddPersistenceLayer(builder.Configuration)
+	.AddAuthenticationLayer(builder.Configuration);
 
 builder.Services.AddLogging();
 Log.Logger = new LoggerConfiguration()

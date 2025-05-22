@@ -1,23 +1,34 @@
-﻿using Core.Application.Wrappers;
+﻿using Core.Application.Interfaces.Helpers;
+using Core.Application.Wrappers;
 using Core.Domain.Entities;
 using Infrastructure.Authentication.Context;
 using Infrastructure.Authentication.CustomEntities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using System;
 using System.Net;
 using System.Text;
 
 namespace Infrastructure.Authentication
 {
-    public static class ServiceExtensions
+	public static class ServiceExtensions
     {
         public static IServiceCollection AddAuthenticationLayer(this IServiceCollection service, IConfiguration confi)
         {
+            service.AddDbContext<IdentityContext>((sp, options) =>
+            {
+                //var encryptationServices = sp.GetRequiredService<IEncryptationServices>();
+                //var descripConnection = encryptationServices.Decrypt(confi.GetConnectionString("SqlConnectionString")!);
+
+                options.UseSqlServer(confi.GetConnectionString("SqlConnectionString"),
+                    x => x.MigrationsAssembly(typeof(IdentityContext).Assembly)
+                    );
+			});
+
             service.AddIdentity<AppUser, AppRole>()
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultTokenProviders();
