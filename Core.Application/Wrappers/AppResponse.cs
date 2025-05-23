@@ -31,7 +31,7 @@ namespace Core.Application.Wrappers
         public AppResponse(AppError error, HttpStatusCode httpStatusCode, string? message = null)
         {
             Message = message;
-            Succeded = true;
+            Succeded = false;
             HttpStatusCode = httpStatusCode;
             Errors = Errors ?? [];
             Errors.Add(error);
@@ -39,7 +39,7 @@ namespace Core.Application.Wrappers
         public AppResponse(List<AppError> error, HttpStatusCode httpStatusCode, string? message = null)
         {
             Message = message;
-            Succeded = true;
+            Succeded = false;
             HttpStatusCode = httpStatusCode;
             Errors = Errors ?? [];
             Errors.AddRange(error);
