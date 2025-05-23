@@ -18,6 +18,7 @@ builder.Services
 	.AddLogExtensions()
 	.AddVersioningExtensions()
 	.AddSwaggerExtensions()
+	.AddApiBehaviorExtensions()
 	.AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Host.UseSerilog();

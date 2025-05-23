@@ -7,6 +7,16 @@ namespace JuanDevPortfolio.Api.Extensions
 {
 	public static class ServicesExtensions
 	{
+		public static IServiceCollection  AddApiBehaviorExtensions(this IServiceCollection service)
+		{
+			service.AddControllers()
+				.ConfigureApiBehaviorOptions(option =>
+				{
+					option.SuppressMapClientErrors = true;
+				});
+			return service;
+		}
+
 		public static IServiceCollection AddLogExtensions(this IServiceCollection service)
 		{
 			service.AddLogging();
