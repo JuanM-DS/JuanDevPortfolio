@@ -30,7 +30,6 @@
     <Folder Include="Media\Images\User\" />
     <Folder Include="Media\Images\companyLogo\" />
     <Folder Include="Media\Images\Project\" />
-    <Folder Include="Media\Images\Profile\" />
   </ItemGroup>
 
 </Project>

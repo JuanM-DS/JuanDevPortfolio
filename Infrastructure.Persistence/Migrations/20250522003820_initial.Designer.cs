@@ -206,7 +206,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("CompanyLogoUrl")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
@@ -347,7 +347,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("FromDate")
                         .HasColumnType("Date");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("CompanyLogoUrl")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");

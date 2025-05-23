@@ -9,10 +9,8 @@ namespace Core.Domain.Entities
 		public string? UpdatedBy { get; set; } = string.Empty;
 		public DateTime? Updated { get; set; }
 
-		public string Name { get; set; } = string.Empty;
 		public string ProfesionalTitle { get; set; } = string.Empty;
 		public string Description { get; set; } = string.Empty;
-		public string ProfileImageUrl { get; set; } = string.Empty;
 
 		public string GitHubRepositoryUrl { get; set; } = string.Empty;
 		public string LinkedinUrl { get; set; } = string.Empty;

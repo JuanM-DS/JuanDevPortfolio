@@ -63,9 +63,8 @@ namespace Infrastructure.Authentication.Services
 					.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
 					.Throw();
 
-			var appUser = new AppUser() 
-			{ 
-				UserName = saveUser.UserName,
+			var appUser = new AppUser(saveUser.FirstName, "") 
+			{
 				Email = saveUser.Email,
 				EmailConfirmed = true 
 			};
@@ -94,7 +93,7 @@ namespace Infrastructure.Authentication.Services
 					.Throw();
 			}
 
-			var userDto = new UserDTO(appUser.Id, appUser.UserName, appUser.Email, saveUser.Role);
+			var userDto = new UserDTO(appUser.Id, appUser.UserName, appUser.Email, saveUser.Role, appUser.ProfileImageUrl, appUser.FirstName);
 			return new(userDto, HttpStatusCode.Created);
 		}
 

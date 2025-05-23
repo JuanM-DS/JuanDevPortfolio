@@ -15,10 +15,6 @@ namespace Infrastructure.Persistence.Context.Configurations
                 .IsRequired()
                 .HasDefaultValueSql("NewId()");
 
-            builder.Property(x => x.Name)
-                .IsRequired()
-                .HasMaxLength(200);
-
             builder.Property(x => x.ProfesionalTitle)
                 .IsRequired()
                 .HasMaxLength(200);
@@ -31,10 +27,6 @@ namespace Infrastructure.Persistence.Context.Configurations
                 .HasMaxLength(500);
 
             builder.Property(x => x.GitHubRepositoryUrl)
-                .IsRequired()
-                .HasMaxLength(500);
-
-            builder.Property(x => x.ProfileImageUrl)
                 .IsRequired()
                 .HasMaxLength(500);
 

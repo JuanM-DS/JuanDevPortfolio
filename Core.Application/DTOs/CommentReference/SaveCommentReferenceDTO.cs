@@ -1,9 +1,8 @@
 ﻿namespace Core.Application.DTOs.CommentReferences
 {
-    public record SaveCommentReferenceDTO(
-    string PersonName,
-    string? ProfileImageUrl,
-    string Comment,
+	public record SaveCommentReferenceDTO(
+	Guid AccountId,
+	string Comment,
     Guid ProfileId
     );
 }

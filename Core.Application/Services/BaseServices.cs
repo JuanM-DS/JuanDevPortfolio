@@ -1,5 +1,4 @@
-﻿using Core.Application.Interfaces.Helpers;
-using Core.Application.Interfaces.Repositories;
+﻿using Core.Application.Interfaces.Repositories;
 using Core.Application.Interfaces.Services;
 using Core.Application.Mappings;
 using Core.Application.Wrappers;
@@ -8,7 +7,7 @@ using System.Net;
 
 namespace Core.Application.Services
 {
-    public class BaseServices<TEntity, TEntityDto, SaveTEntityDto> : IBaseServices<TEntity, TEntityDto, SaveTEntityDto>
+	public class BaseServices<TEntity, TEntityDto, SaveTEntityDto> : IBaseServices<TEntity, TEntityDto, SaveTEntityDto>
         where TEntity : BaseEntity
         where TEntityDto : class
     {
@@ -19,7 +18,7 @@ namespace Core.Application.Services
             _repo = repo;
         }
 
-        public async Task<AppResponse<TEntityDto>> CreateAsync(SaveTEntityDto saveDto)
+        public virtual async Task<AppResponse<TEntityDto>> CreateAsync(SaveTEntityDto saveDto)
         {
             var entity = Mapper.Map<TEntity, SaveTEntityDto>(saveDto);
             if (entity is null)
@@ -42,7 +41,7 @@ namespace Core.Application.Services
             return new(entityDto, HttpStatusCode.Created);
         }
 
-        public async Task<AppResponse<Guid>> DeleteAsync(Guid Id)
+        public virtual async Task<AppResponse<Guid>> DeleteAsync(Guid Id)
         {
             var entity = await _repo.GetByIdAsync(Id);
             if (entity is null)
@@ -59,7 +58,7 @@ namespace Core.Application.Services
             return new(Id, HttpStatusCode.OK);
         }
 
-        public AppResponse<List<TEntityDto>> GetAll()
+        public virtual AppResponse<List<TEntityDto>> GetAll()
         {
             var data = _repo.GetAll().ToList();
             if (data is null || !data.Any())
@@ -74,7 +73,7 @@ namespace Core.Application.Services
             return new(dataDto, HttpStatusCode.OK);
         }
 
-        public async Task<AppResponse<TEntityDto?>> GetByIdAsync(Guid Id)
+        public virtual async Task<AppResponse<TEntityDto?>> GetByIdAsync(Guid Id)
         {
             var data = await _repo.GetByIdAsync(id:Id);
             if (data is null)
@@ -89,7 +88,7 @@ namespace Core.Application.Services
             return new(dataDto, HttpStatusCode.OK);
         }
 
-        public async Task<AppResponse<TEntityDto>> UpdateAsync(SaveTEntityDto saveDto)
+        public virtual async Task<AppResponse<TEntityDto>> UpdateAsync(SaveTEntityDto saveDto)
         {
             var entity = Mapper.Map<TEntity, SaveTEntityDto>(saveDto);
             if(entity is null)

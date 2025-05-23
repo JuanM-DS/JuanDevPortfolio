@@ -2,9 +2,9 @@
 {
     public record CommentReferenceDTO(
         Guid Id,
-        string PersonName,
-        string? ProfileImageUrl,
         string Comment,
-        Guid ProfileId
+        Guid ProfileId,
+        string PersonName = "",
+        string ProfileImageUrl = ""
     );
 }

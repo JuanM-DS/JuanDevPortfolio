@@ -28,6 +28,9 @@ namespace Core.Application.Mappings
 		[MapperIgnoreSource(nameof(CommentReference.UpdatedBy))]
 		[MapperIgnoreSource(nameof(CommentReference.IsConfirmed))]
 		[MapperIgnoreSource(nameof(CommentReference.Profile))]
+		[MapperIgnoreSource(nameof(CommentReference.AccountId))]
+		[MapperIgnoreTarget(nameof(CommentReferenceDTO.PersonName))]
+		[MapperIgnoreTarget(nameof(CommentReferenceDTO.ProfileImageUrl))]
 		private static partial CommentReferenceDTO Map(CommentReference source);
 
 		[MapperIgnoreTarget(nameof(CommentReference.Created))]
@@ -90,6 +93,7 @@ namespace Core.Application.Mappings
 		[MapperIgnoreTarget(nameof(ProjectImage.UpdatedBy))]
 		[MapperIgnoreTarget(nameof(ProjectImage.Project))]
 		[MapperIgnoreTarget(nameof(ProjectImage.Id))]
+		[MapperIgnoreSource(nameof(SaveProjectImageDTO.ImageFile))]
 		private static partial ProjectImage Map(SaveProjectImageDTO source);
 		
 		[MapperIgnoreSource(nameof(ProjectImage.Created))]
@@ -124,6 +128,7 @@ namespace Core.Application.Mappings
 		[MapperIgnoreTarget(nameof(TechnologyItem.Updated))]
 		[MapperIgnoreTarget(nameof(TechnologyItem.UpdatedBy))]
 		[MapperIgnoreTarget(nameof(TechnologyItem.Id))]
+		[MapperIgnoreSource(nameof(SaveTechnologyItemDTO.ImageFile))]
 		private static partial TechnologyItem Map(SaveTechnologyItemDTO source);
 		
 		[MapperIgnoreSource(nameof(TechnologyItem.Created))]
@@ -140,6 +145,7 @@ namespace Core.Application.Mappings
 		[MapperIgnoreTarget(nameof(WorkExperience.UpdatedBy))]
 		[MapperIgnoreTarget(nameof(WorkExperience.Id))]
 		[MapperIgnoreTarget(nameof(WorkExperience.Profile))]
+		[MapperIgnoreSource(nameof(SaveWorkExperienceDTO.LogoFile))]
 		private static partial WorkExperience Map(SaveWorkExperienceDTO source);
 		
 		[MapperIgnoreSource(nameof(WorkExperience.Created))]

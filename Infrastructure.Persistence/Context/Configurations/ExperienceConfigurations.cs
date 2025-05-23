@@ -35,7 +35,7 @@ namespace Infrastructure.Persistence.Context.Configurations
 				.IsRequired()
 				.HasMaxLength(500);
 
-			builder.Property(x => x.ImageUrl)
+			builder.Property(x => x.CompanyLogoUrl)
 				.IsRequired()
 				.HasMaxLength(500);
 

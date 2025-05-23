@@ -14,7 +14,7 @@ namespace Core.Domain.Entities
 		public DateTime FromDate { get; set; }
 		public DateTime? ToDate { get; set; }
 		public string Description { get; set; } = string.Empty;
-		public string ImageUrl { get; set; } = string.Empty;
+		public string CompanyLogoUrl { get; set; } = string.Empty;
 		public Guid ProfileId { get; set; }
 
 		public Profile Profile { get; set; } = null!;

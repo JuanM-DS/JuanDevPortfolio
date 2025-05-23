@@ -9,8 +9,7 @@ namespace Core.Domain.Entities
 		public string? UpdatedBy { get; set; } = string.Empty;
 		public DateTime? Updated { get; set; }
 
-		public string PersonName { get; set; } = string.Empty;
-		public string? ProfileImageUrl { get; set; }
+		public Guid AccountId { get; set; }
 		public string Comment { get; set; } = string.Empty;
 		public Guid ProfileId { get; set; }
 		public bool IsConfirmed { get; set; }
