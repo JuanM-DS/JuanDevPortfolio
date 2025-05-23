@@ -1,6 +1,8 @@
 ﻿using Asp.Versioning;
 using Core.Domain.Enumerables;
+using Microsoft.OpenApi.Models;
 using Serilog;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace JuanDevPortfolio.Api.Extensions
 {
@@ -40,6 +42,80 @@ namespace JuanDevPortfolio.Api.Extensions
 			});
 
 			return service;
+		}
+
+		public static IServiceCollection AddSwaggerExtensions(this IServiceCollection  service)
+		{
+
+			service.AddSwaggerGen(option =>
+			{
+				var xmls = Directory.GetFiles(AppContext.BaseDirectory, "*.xml", SearchOption.TopDirectoryOnly).ToList();
+				xmls.ForEach(x => option.IncludeXmlComments(x));
+
+				option.SwaggerDoc("v1", new OpenApiInfo 
+				{ 
+					Version = "1.0",
+					Title = "JuanDevPortfolio",
+					Description = "My api to maintenance my personal portfolio",
+					Contact = new OpenApiContact
+					{
+						Name = "Juan De Los Santos",
+						Email = "juanm.2004.sd@gmail.com",
+						Url = new Uri("https://www.linkedin.com/in/juan-manuel-de-los-santos-069755250/")
+					}
+				});
+
+				option.DescribeAllParametersInCamelCase();
+				option.EnableAnnotations();
+
+				option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+				{
+					Name = "Authentication",
+					In = ParameterLocation.Header,
+					Type = SecuritySchemeType.ApiKey,
+					Scheme = "Bearer",
+					BearerFormat = "JWT",
+					Description = "Introduce your token like this: bearer {Your token here}"
+				});
+
+				option.AddSecurityRequirement(new OpenApiSecurityRequirement
+				{
+					{
+						new OpenApiSecurityScheme
+						{
+							Name = "Bearer",
+							In = ParameterLocation.Header,
+							Scheme = "Bearer",
+							Reference = new OpenApiReference
+							{
+								Type = ReferenceType.SecurityScheme,
+								Id = "Berarer"
+							} 
+						},
+						new List<string>()
+					}
+				});
+			});
+
+			return service;
+		}
+	}
+
+	public static class AppExtensions
+	{
+		public static WebApplication UseSwaggerExtencions(this WebApplication app)
+		{
+			if (app.Environment.IsDevelopment())
+			{
+				app.UseSwagger();
+				app.UseSwaggerUI(option =>
+				{
+					option.SwaggerEndpoint("/swagger/v1/swagger.json", "JuanDevPortFolio");
+					option.DefaultModelRendering(ModelRendering.Model);
+				});
+			}
+
+			return app;
 		}
 	}
 }

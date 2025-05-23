@@ -10,7 +10,6 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions {WebRootPat
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 builder.Services
 	.AddSharedLayer(builder.Configuration)
@@ -18,19 +17,17 @@ builder.Services
 	.AddAuthenticationLayer(builder.Configuration)
 	.AddLogExtensions()
 	.AddVersioningExtensions()
+	.AddSwaggerExtensions()
 	.AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Host.UseSerilog();
 
 var app = builder.Build();
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseExceptionHandler(o => { });
-if (app.Environment.IsDevelopment())
-{
-	app.UseSwagger();
-	app.UseSwaggerUI();
-}
+app.UseSwaggerExtencions();
 app.UseStaticFiles();
 app.UseHttpsRedirection();
-app.UseAuthorization();
 app.MapControllers();
 app.Run();
