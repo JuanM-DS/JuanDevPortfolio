@@ -15,9 +15,6 @@ namespace Infrastructure.Persistence.Repositories
 		{
 			var query = _entity.AsQueryable();
 
-			if (!string.IsNullOrWhiteSpace(filter.Name))
-				query = query.Where(x => x.Name.Contains(filter.Name));
-
 			if (!string.IsNullOrWhiteSpace(filter.ProfesionalTitle))
 				query = query.Where(x => x.ProfesionalTitle.Contains(filter.ProfesionalTitle));
 

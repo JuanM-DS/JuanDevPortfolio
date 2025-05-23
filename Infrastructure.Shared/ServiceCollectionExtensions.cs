@@ -1,4 +1,5 @@
 ﻿using Core.Application.Interfaces.Helpers;
+using Core.Application.Interfaces.Shared;
 using Infrastructure.Shared.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;

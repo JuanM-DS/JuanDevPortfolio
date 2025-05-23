@@ -1,6 +1,8 @@
-﻿namespace Core.Application.DTOs.Authentication
-{
-	public record SaveUserDTO(string UserName, string Email, string Password, string ConfirmPassword, string Role);
+﻿using Microsoft.AspNetCore.Http;
 
-	public record UserDTO(Guid Id, string Name, string Email, string Role);
+namespace Core.Application.DTOs.Authentication
+{
+	public record SaveUserDTO(string Email, string Password, string ConfirmPassword, string Role, string FirstName, IFormFile ImageFile);
+
+	public record UserDTO(Guid Id, string Email, string Role, string ProfileImageUrl, string FirstName);
 }

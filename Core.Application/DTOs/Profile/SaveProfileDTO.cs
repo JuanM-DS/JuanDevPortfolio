@@ -1,10 +1,8 @@
 ﻿namespace Core.Application.DTOs.Profile
 {
-    public record SaveProfileDTO(
-        string Name,
+	public record SaveProfileDTO(
         string ProfesionalTitle,
         string Description,
-        string ProfileImageUrl,
         string GitHubRepositoryUrl,
         string LinkedinUrl,
         string CvUrl,

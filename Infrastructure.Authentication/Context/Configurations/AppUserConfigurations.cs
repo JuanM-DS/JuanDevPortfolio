@@ -10,6 +10,13 @@ namespace Infrastructure.Authentication.Context.Configurations
         {
             builder.Property(x => x.Id)
                 .HasDefaultValueSql("NEWID()");
-        }
+
+            builder.Property(x => x.ProfileImageUrl)
+                .IsRequired();
+
+            builder.Property(x => x.FirstName)
+               .IsRequired()
+               .HasMaxLength(50);
+		}
     }
 }

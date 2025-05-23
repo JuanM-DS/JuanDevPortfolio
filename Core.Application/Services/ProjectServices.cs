@@ -1,7 +1,7 @@
 ﻿using Core.Application.DTOs.Project;
-using Core.Application.Interfaces.Helpers;
 using Core.Application.Interfaces.Repositories;
 using Core.Application.Interfaces.Services;
+using Core.Application.Mappings;
 using Core.Application.QueryFilters;
 using Core.Application.Wrappers;
 using Core.Domain.Entities;
@@ -9,13 +9,13 @@ using System.Net;
 
 namespace Core.Application.Services
 {
-    public class ProjectServices : BaseServices<Project, ProjectDTO, SaveProjectDTO>, IProjectServices
+	public class ProjectServices : BaseServices<Project, ProjectDTO, SaveProjectDTO>, IProjectServices
     {
 		private readonly IProjectRepository repo;
 		private readonly ITechnologyItemRepository technologyItemRepo;
 
-		public ProjectServices(IProjectRepository repo, IMapper mapper, ITechnologyItemRepository TechnologyItemRepo)
-            : base(repo, mapper)
+		public ProjectServices(IProjectRepository repo, ITechnologyItemRepository TechnologyItemRepo)
+            : base(repo)
 		{
 			this.repo = repo;
 			technologyItemRepo = TechnologyItemRepo;
@@ -53,7 +53,7 @@ namespace Core.Application.Services
 			if (data is null || !data.Any())
 				return new(HttpStatusCode.NoContent, "No hay elementos para mostrar");
 
-			var dataDto = _mapper.Map<ProjectDTO,Project> (data);
+			var dataDto = Mapper.Map<ProjectDTO,Project> (data);
 			if (dataDto is null)
 				AppError.Create("Hubo problemas al mappear la request")
 					.BuildResponse<ProjectDTO>(HttpStatusCode.InternalServerError)

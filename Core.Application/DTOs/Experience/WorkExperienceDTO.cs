@@ -7,7 +7,7 @@
         DateTime FromDate,
         DateTime? ToDate,
         string Description,
-        string ImageUrl,
+        string CompanyLogoUrl,
         Guid ProfileId
     );
 }

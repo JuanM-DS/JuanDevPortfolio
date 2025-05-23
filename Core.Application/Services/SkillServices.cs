@@ -1,7 +1,7 @@
 ﻿using Core.Application.DTOs.Skill;
-using Core.Application.Interfaces.Helpers;
 using Core.Application.Interfaces.Repositories;
 using Core.Application.Interfaces.Services;
+using Core.Application.Mappings;
 using Core.Application.QueryFilters;
 using Core.Application.Wrappers;
 using Core.Domain.Entities;
@@ -14,8 +14,8 @@ namespace Core.Application.Services
 		private readonly ISkillRepository repo;
 		private readonly ITechnologyItemRepository technologyItemRepo;
 
-		public SkillServices(ISkillRepository repo, IMapper mapper, ITechnologyItemRepository TechnologyItemRepo)
-            : base(repo, mapper)
+		public SkillServices(ISkillRepository repo, ITechnologyItemRepository TechnologyItemRepo)
+            : base(repo)
 		{
 			this.repo = repo;
 			technologyItemRepo = TechnologyItemRepo;
@@ -54,7 +54,7 @@ namespace Core.Application.Services
 			if (data is null || !data.Any())
 				return new(HttpStatusCode.NoContent, "No hay elementos para mostrar");
 
-			var dataDto = _mapper.Map<SkillDTO, Skill>(data);
+			var dataDto = Mapper.Map<SkillDTO, Skill>(data);
 			if (dataDto is null)
 				AppError.Create("Hubo problemas al mappear la request")
 					.BuildResponse<SkillDTO>(HttpStatusCode.InternalServerError)

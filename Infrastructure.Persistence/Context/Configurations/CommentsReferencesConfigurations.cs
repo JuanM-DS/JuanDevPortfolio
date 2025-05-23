@@ -15,13 +15,8 @@ namespace Infrastructure.Persistence.Context.Configurations
                 .IsRequired()
                 .HasDefaultValueSql("NewId()");
 
-            builder.Property(x => x.PersonName)
-                .IsRequired()
-                .HasMaxLength(100);
-
-            builder.Property(x => x.ProfileImageUrl)
-                .IsRequired(false)
-                .HasMaxLength(500);
+            builder.Property(x => x.AccountId)
+                .IsRequired();
 
             builder.Property(x => x.Comment)
                 .IsRequired()
@@ -31,7 +26,7 @@ namespace Infrastructure.Persistence.Context.Configurations
                 .IsRequired();
 
 			builder.Property(x => x.IsConfirmed)
-                .HasDefaultValueSql("false")
+                .HasDefaultValue(false)
 				.IsRequired();
 
 			#region AuditableProperties

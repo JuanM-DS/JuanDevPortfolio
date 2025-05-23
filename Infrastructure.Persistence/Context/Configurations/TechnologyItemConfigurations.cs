@@ -16,11 +16,11 @@ namespace Infrastructure.Persistence.Context.Configurations
                 .IsRequired()
                 .HasDefaultValueSql("NewId()");
 
-            builder.Property(x => x.Title)
+            builder.Property(x => x.Name)
                 .IsRequired()
                 .HasMaxLength(50);
 
-            builder.Property(x => x.Title)
+            builder.Property(x => x.Name)
                 .IsRequired()
                 .HasMaxLength(200);
 

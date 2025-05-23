@@ -1,7 +1,10 @@
-﻿namespace Core.Application.DTOs.ProjectImage
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Core.Application.DTOs.ProjectImage
 {
     public record SaveProjectImageDTO(
         Guid ProjectId,
-        string ImageUrl
-    );
+		IFormFile? ImageFile,
+		string ImageUrl
+	);
 }

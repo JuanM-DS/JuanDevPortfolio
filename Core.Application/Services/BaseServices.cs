@@ -1,28 +1,26 @@
-﻿using Core.Application.Interfaces.Helpers;
-using Core.Application.Interfaces.Repositories;
+﻿using Core.Application.Interfaces.Repositories;
 using Core.Application.Interfaces.Services;
+using Core.Application.Mappings;
 using Core.Application.Wrappers;
 using Core.Domain.Entities;
 using System.Net;
 
 namespace Core.Application.Services
 {
-    public class BaseServices<TEntity, TEntityDto, SaveTEntityDto> : IBaseServices<TEntity, TEntityDto, SaveTEntityDto>
+	public class BaseServices<TEntity, TEntityDto, SaveTEntityDto> : IBaseServices<TEntity, TEntityDto, SaveTEntityDto>
         where TEntity : BaseEntity
         where TEntityDto : class
     {
         protected readonly IBaseRepository<TEntity> _repo;
-        protected readonly IMapper _mapper;
 
-        public BaseServices(IBaseRepository<TEntity> repo, IMapper Mapper)
+        public BaseServices(IBaseRepository<TEntity> repo)
         {
             _repo = repo;
-            _mapper = Mapper;
         }
 
-        public async Task<AppResponse<TEntityDto>> CreateAsync(SaveTEntityDto saveDto)
+        public virtual async Task<AppResponse<TEntityDto>> CreateAsync(SaveTEntityDto saveDto)
         {
-            var entity = _mapper.Map<TEntity, SaveTEntityDto>(saveDto);
+            var entity = Mapper.Map<TEntity, SaveTEntityDto>(saveDto);
             if (entity is null)
                 AppError.Create("Hubo problemas al mappear la entidad")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
@@ -34,7 +32,7 @@ namespace Core.Application.Services
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
                     .Throw();
 
-            var entityDto = _mapper.Map<TEntityDto, TEntity>(entity!);
+            var entityDto = Mapper.Map<TEntityDto, TEntity>(entity!);
             if (entity is null)
                 AppError.Create("Hubo problemas al mappear la entidad creada")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
@@ -43,7 +41,7 @@ namespace Core.Application.Services
             return new(entityDto, HttpStatusCode.Created);
         }
 
-        public async Task<AppResponse<Guid>> DeleteAsync(Guid Id)
+        public virtual async Task<AppResponse<Guid>> DeleteAsync(Guid Id)
         {
             var entity = await _repo.GetByIdAsync(Id);
             if (entity is null)
@@ -60,13 +58,13 @@ namespace Core.Application.Services
             return new(Id, HttpStatusCode.OK);
         }
 
-        public AppResponse<List<TEntityDto>> GetAll()
+        public virtual AppResponse<List<TEntityDto>> GetAll()
         {
             var data = _repo.GetAll().ToList();
             if (data is null || !data.Any())
                 return new(HttpStatusCode.NoContent, "No hay elementos para mostrar");
 
-            var dataDto = _mapper.Map<TEntityDto, TEntity>(data);
+            var dataDto = Mapper.Map<TEntityDto, TEntity>(data);
             if(dataDto is null)
                 AppError.Create("Hubo problemas al mappear la request")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
@@ -75,13 +73,13 @@ namespace Core.Application.Services
             return new(dataDto, HttpStatusCode.OK);
         }
 
-        public async Task<AppResponse<TEntityDto?>> GetByIdAsync(Guid Id)
+        public virtual async Task<AppResponse<TEntityDto?>> GetByIdAsync(Guid Id)
         {
             var data = await _repo.GetByIdAsync(id:Id);
             if (data is null)
                 return new(HttpStatusCode.NoContent, "No hay elementos para mostrar");
 
-            var dataDto = _mapper.Map<TEntityDto, TEntity>(data);
+            var dataDto = Mapper.Map<TEntityDto, TEntity>(data);
             if (dataDto is null)
                 AppError.Create("Hubo problemas al mappear la request")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
@@ -90,21 +88,27 @@ namespace Core.Application.Services
             return new(dataDto, HttpStatusCode.OK);
         }
 
-        public async Task<AppResponse<TEntityDto>> UpdateAsync(SaveTEntityDto saveDto)
+        public virtual async Task<AppResponse<TEntityDto>> UpdateAsync(SaveTEntityDto saveDto, Guid Id)
         {
-            var entity = _mapper.Map<TEntity, SaveTEntityDto>(saveDto);
+            var entityById = await _repo.GetByIdAsNoTrackingAsync(Id);
+			if (entityById is null)
+				AppError.Create("No existe ninguna entidad con el Id enviado")
+					.BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
+					.Throw();
+
+			var entity = Mapper.Map<TEntity, SaveTEntityDto>(saveDto);
             if(entity is null)
                 AppError.Create("Hubo problemas al mappear la request")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
                     .Throw();
-
-            var result = await _repo.UpdateAsync(entity!);
+            entity!.Id = Id;
+			var result = await _repo.UpdateAsync(entity!);
             if(result)
                 AppError.Create("Hubo problemas al actualizar la entidad.")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
                     .Throw();
 
-            var entityDto = _mapper.Map<TEntityDto, TEntity>(entity!);
+            var entityDto = Mapper.Map<TEntityDto, TEntity>(entity!);
             if(entityDto is null)
                 AppError.Create("Hubo problemas al mappear la request")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)

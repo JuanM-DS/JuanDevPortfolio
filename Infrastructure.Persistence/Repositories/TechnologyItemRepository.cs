@@ -16,7 +16,7 @@ namespace Infrastructure.Persistence.Repositories
 			var query = _entity.AsQueryable();
 
 			if (!string.IsNullOrEmpty(filter.Title))
-				query = query.Where(x => x.Title == filter.Title);
+				query = query.Where(x => x.Name == filter.Title);
 
 			if (filter.LevelType is not null)
 				query = query.Where(x => x.LevelType == filter.LevelType);

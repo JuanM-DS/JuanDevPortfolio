@@ -1,49 +1,42 @@
-using Core.Domain.Enumerables;
+using Infrastructure.Authentication;
 using Infrastructure.Persistence;
 using Infrastructure.Shared;
+using JuanDevPortfolio.Api.Extensions;
 using JuanDevPortfolio.Api.Middlewares;
 using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+	WebRootPath = "Media",
+	Args = args,
+	ApplicationName = typeof(Program).Assembly.FullName,
+	ContentRootPath = Directory.GetCurrentDirectory(),
+	EnvironmentName = Environments.Staging
+});
 
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSharedLayer(builder.Configuration)
-	.AddPersistenceLayer(builder.Configuration);
-	//.AddAuthenticationLayer(builder.Configuration);
 
-builder.Services.AddLogging();
-Log.Logger = new LoggerConfiguration()
-	.MinimumLevel.Information()
-	.WriteTo.File("Logs\\General_log.txt")
-	.WriteTo.Logger(lg =>
+builder.Services
+	.AddSharedLayer(builder.Configuration)
+	.AddPersistenceLayer(builder.Configuration)
+	.AddAuthenticationLayer(builder.Configuration)
+	.AddLogExtensions()
+	.AddVersioningExtensions()
+	.AddExceptionHandler<GlobalExceptionHandler>();
 
-		lg.Filter.ByIncludingOnly(f=>f.Properties.ContainsKey(LoggerKeys.RepositoryLogs.ToString()))
-		.WriteTo.File($"Logs\\Infrastructure\\{LoggerKeys.RepositoryLogs}.txt")
-	)
-	.WriteTo.Logger(lg => 
-		lg.Filter.ByIncludingOnly(p=>p.Properties.ContainsKey(LoggerKeys.AuthenticationLogs.ToString()))
-		.WriteTo.File($"Logs\\Infrastructure\\{LoggerKeys.AuthenticationLogs}.txt")
-	)
-	.WriteTo.Logger(x =>
-	{
-		x.Filter.ByIncludingOnly(p => p.Properties.ContainsKey(LoggerKeys.SharedLogs.ToString()))
-		.WriteTo.File($"Logs\\Infrastructure\\{LoggerKeys.SharedLogs}.txt");
-	})
-	.CreateLogger();
 builder.Host.UseSerilog();
 
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-
 var app = builder.Build();
-app.UseExceptionHandler();
+app.UseExceptionHandler(o => { });
 if (app.Environment.IsDevelopment())
 {
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
+app.UseStaticFiles(new StaticFileOptions { RequestPath = "/Images" });
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
