@@ -1,5 +1,6 @@
 ﻿using Core.Application.Interfaces.Helpers;
 using Core.Application.Interfaces.Repositories;
+using Core.Application.Interfaces.Shared;
 using Infrastructure.Persistence.Context;
 using Infrastructure.Persistence.Context.Interceptors;
 using Infrastructure.Persistence.Repositories;
@@ -43,9 +44,10 @@ namespace Infrastructure.Persistence
             service.AddScoped<ISkillRepository, SkillRepository>();
             service.AddScoped<ITechnologyItemRepository, TechnologyItemRepository>();
             service.AddScoped<ICommentReferencesRepository, CommentReferencesRepository>();
-            #endregion
+			service.AddScoped<IImageRepository, ImageRepository>();
+			#endregion
 
-            return service;
+			return service;
 		}
 	}
 }

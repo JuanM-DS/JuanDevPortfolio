@@ -44,7 +44,7 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
-		[HttpPut]
+		[HttpPut("/{Id:Guid}")]
 		public async Task<IActionResult> UpdateAsync(SaveCommentReferenceDTO saveModel, [FromRoute]Guid Id)
 		{
 			var response = await _commentReferencesServices.UpdateAsync(saveModel, Id);

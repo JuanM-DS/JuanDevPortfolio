@@ -4,11 +4,11 @@ using Core.Domain.Entities;
 
 namespace Core.Application.Interfaces.Services
 {
-	public interface IAuthenticationServices 
+	public interface IAccountServices 
     {
         public Task<AppResponse<UserDTO>> RegisterAsync(SaveUserDTO saveUser);
 
-        public Task<AppResponse<string>> SignInAsync(LoginRequestDTO Login);
+        public Task<AppResponse<string>> SignInAsync(SignInRequestDTO Login);
 
         public Task SignOutAsync();
 
@@ -17,7 +17,5 @@ namespace Core.Application.Interfaces.Services
         public Task<AppResponse<Empty>> ResetPassword(ResetPasswordRequestDTO request);
 
         public Task<AppResponse<string>> GenerateResetTokenAsync();
-		Task<AppResponse<UserDTO>> UpdateAsync(SaveUserDTO updateUser, Guid Id);
-		Task<AppResponse<bool>> DeleteAsync(Guid userId);
 	}
 }

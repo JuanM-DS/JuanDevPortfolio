@@ -44,7 +44,7 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
-		[HttpPut]
+		[HttpPut("/{Id:Guid}")]
 		public async Task<IActionResult> UpdateAsync(SaveWorkExperienceDTO saveModel, [FromRoute] Guid Id)
 		{
 			var response = await _workExperienceServices.UpdateAsync(saveModel, Id);
