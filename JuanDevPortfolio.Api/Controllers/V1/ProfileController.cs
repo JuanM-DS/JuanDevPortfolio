@@ -45,9 +45,9 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		}
 
 		[HttpPut]
-		public async Task<IActionResult> UpdateAsync(SaveProfileDTO saveModel)
+		public async Task<IActionResult> UpdateAsync(SaveProfileDTO saveModel, [FromRoute] Guid Id)
 		{
-			var response = await _profileServices.UpdateAsync(saveModel);
+			var response = await _profileServices.UpdateAsync(saveModel, Id);
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 

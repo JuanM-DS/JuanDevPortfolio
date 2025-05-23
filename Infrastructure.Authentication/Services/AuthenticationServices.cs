@@ -30,9 +30,10 @@ namespace Infrastructure.Authentication.Services
 		private readonly IEmailServices emailServices;
 		private readonly IUriServices uriServices;
 		private readonly IHttpContextProvider httpContextProvider;
+		private readonly IImageRepository imageRepository;
 		private JwtSettings jwtSettings;
 
-		public AuthenticationServices(UserManager<AppUser> UserManager, RoleManager<AppRole> RoleManager, SignInManager<AppUser> SigningManager, IEmailServices EmailServices, IUriServices UriServices, IOptions<JwtSettings> JwtSettings, IHttpContextProvider HttpContextProvider)
+		public AuthenticationServices(UserManager<AppUser> UserManager, RoleManager<AppRole> RoleManager, SignInManager<AppUser> SigningManager, IEmailServices EmailServices, IUriServices UriServices, IOptions<JwtSettings> JwtSettings, IHttpContextProvider HttpContextProvider, IImageRepository imageRepository)
         {
             userManager = UserManager;
             roleManager = RoleManager;
@@ -40,6 +41,7 @@ namespace Infrastructure.Authentication.Services
 			emailServices = EmailServices;
 			uriServices = UriServices;
 			httpContextProvider = HttpContextProvider;
+			this.imageRepository = imageRepository;
 			jwtSettings = JwtSettings.Value;
 		}
 		
@@ -50,23 +52,25 @@ namespace Infrastructure.Authentication.Services
 					.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
 					.Throw();
 
-			var userByName = userManager.FindByNameAsync(saveUser.UserName);
 			var userByEmail= userManager.FindByEmailAsync(saveUser.Email);
-
-			if ((await userByName) is not null)
-				AppError.Create($"El userName: {saveUser.UserName} ya esta siendo utilizado")
-					.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
-					.Throw();
 
 			if ((await userByEmail) is not null)
 				AppError.Create($"El email: {saveUser.Email} ya esta siendo utilizado")
 					.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
 					.Throw();
 
-			var appUser = new AppUser(saveUser.FirstName, "") 
+			string? imageUrl = null;
+			if (saveUser.ImageFile is not null)
+			{
+				imageUrl = await imageRepository
+					.SaveImageAsync(saveUser.ImageFile, "User", saveUser.Email);
+			}
+			imageUrl ??= imageRepository.GetDefaultImageUrl("User");
+
+			var appUser = new AppUser(saveUser.FirstName, imageUrl) 
 			{
 				Email = saveUser.Email,
-				EmailConfirmed = true 
+				EmailConfirmed = true
 			};
 
 			var result = await userManager.CreateAsync(appUser, saveUser.Role);
@@ -93,7 +97,7 @@ namespace Infrastructure.Authentication.Services
 					.Throw();
 			}
 
-			var userDto = new UserDTO(appUser.Id, appUser.UserName, appUser.Email, saveUser.Role, appUser.ProfileImageUrl, appUser.FirstName);
+			var userDto = new UserDTO(appUser.Id, appUser.Email, saveUser.Role, appUser.ProfileImageUrl, appUser.FirstName);
 			return new(userDto, HttpStatusCode.Created);
 		}
 
@@ -199,6 +203,109 @@ namespace Infrastructure.Authentication.Services
 
 			var token = await GenerateJwtTokenAsync(user!);
 			return new(token, HttpStatusCode.OK, "Se ha generado un nuevo token correctamente");
+		}
+
+		public async Task<AppResponse<UserDTO>> UpdateAsync(SaveUserDTO updateUser, Guid Id)
+		{
+			var appUser = await userManager.FindByIdAsync(Id.ToString());
+			if (appUser is null)
+				AppError.Create($"Usuario con Id {Id} no encontrado")
+					.BuildResponse<UserDTO>(HttpStatusCode.NotFound)
+					.Throw();
+
+			if (!string.Equals(appUser?.Email, updateUser.Email, StringComparison.OrdinalIgnoreCase))
+			{
+				var byEmail = await userManager.FindByEmailAsync(updateUser.Email);
+				if (byEmail is not null)
+					AppError.Create($"El email {updateUser.Email} ya está en uso")
+						.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
+						.Throw();
+
+				appUser!.Email = updateUser.Email;
+				appUser.EmailConfirmed = false; 
+			}
+
+			if (!string.IsNullOrEmpty(updateUser.Password))
+			{
+				if (updateUser.Password != updateUser.ConfirmPassword)
+					AppError.Create("Las contraseñas no coinciden")
+						.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
+						.Throw();
+
+				var token = await userManager.GeneratePasswordResetTokenAsync(appUser!);
+				var passResult = await userManager.ResetPasswordAsync(appUser!, token, updateUser.Password);
+				if (!passResult.Succeeded)
+				{
+					foreach (var e in passResult.Errors)
+						Log.ForContext(LoggerKeys.AuthenticationLogs.ToString(), true)
+						   .Information(e.Description);
+
+					AppError.Create("Error al actualizar la contraseña")
+						.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
+						.Throw();
+				}
+			}
+
+			if (!string.IsNullOrWhiteSpace(updateUser.FirstName))
+				appUser!.FirstName = updateUser.FirstName;
+
+			if (updateUser.ImageFile is not null)
+			{
+				var savedUrl = await imageRepository
+					.SaveImageAsync(updateUser.ImageFile, "User", appUser?.Email!, appUser?.ProfileImageUrl);
+
+				appUser!.ProfileImageUrl = string.IsNullOrWhiteSpace(savedUrl)
+					? appUser.ProfileImageUrl
+					: savedUrl;
+			}
+
+			var updateResult = await userManager.UpdateAsync(appUser!);
+			if (!updateResult.Succeeded)
+			{
+				foreach (var e in updateResult.Errors)
+					Log.ForContext(LoggerKeys.AuthenticationLogs.ToString(), true)
+					   .Information(e.Description);
+
+				AppError.Create("Error al actualizar el usuario")
+					.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
+					.Throw();
+			}
+
+			var dto = new UserDTO(
+				Id: appUser!.Id,
+				Email: appUser.Email!,
+				Role: (await userManager.GetRolesAsync(appUser)).FirstOrDefault() ?? "",
+				ProfileImageUrl: appUser.ProfileImageUrl,
+				FirstName: appUser.FirstName
+			);
+
+			return new(dto, HttpStatusCode.OK);
+		}
+
+		public async Task<AppResponse<bool>> DeleteAsync(Guid userId)
+		{
+			var appUser = await userManager.FindByIdAsync(userId.ToString());
+			if (appUser is null)
+				AppError.Create($"Usuario con Id {userId} no encontrado")
+					.BuildResponse<bool>(HttpStatusCode.NotFound)
+					.Throw();
+
+			if (!string.IsNullOrWhiteSpace(appUser!.ProfileImageUrl))
+				imageRepository.DeleteImage(appUser.ProfileImageUrl);
+
+			var result = await userManager.DeleteAsync(appUser);
+			if (!result.Succeeded)
+			{
+				foreach (var e in result.Errors)
+					Log.ForContext(LoggerKeys.AuthenticationLogs.ToString(), true)
+					   .Information(e.Description);
+
+				AppError.Create("Error al eliminar el usuario")
+					.BuildResponse<bool>(HttpStatusCode.BadRequest)
+					.Throw();
+			}
+
+			return new(true, HttpStatusCode.NoContent);
 		}
 
 		#region Privates

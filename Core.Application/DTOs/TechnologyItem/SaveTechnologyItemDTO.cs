@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 namespace Core.Application.DTOs.TTechnologyItem
 {
     public record SaveTechnologyItemDTO(
-        string Title,
+        string Name,
 		string ImageIconUrl,
 		IFormFile? ImageFile,
 		string Description,

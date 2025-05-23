@@ -7,7 +7,7 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
-	WebRootPath = "Images",
+	WebRootPath = "Media",
 	Args = args,
 	ApplicationName = typeof(Program).Assembly.FullName,
 	ContentRootPath = Directory.GetCurrentDirectory(),
@@ -36,7 +36,7 @@ if (app.Environment.IsDevelopment())
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
-app.UseStaticFiles(new StaticFileOptions { RequestPath = "/contentRoot" });
+app.UseStaticFiles(new StaticFileOptions { RequestPath = "/Images" });
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

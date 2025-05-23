@@ -9,7 +9,7 @@ namespace Core.Application.Interfaces.Services
     {
         public Task<AppResponse<TEntityDto>> CreateAsync(SaveTEntityDto saveDto);
 
-        public Task<AppResponse<TEntityDto>> UpdateAsync(SaveTEntityDto saveDto);
+        public Task<AppResponse<TEntityDto>> UpdateAsync(SaveTEntityDto saveDto, Guid Id);
 
         public Task<AppResponse<Guid>> DeleteAsync(Guid Id);
 

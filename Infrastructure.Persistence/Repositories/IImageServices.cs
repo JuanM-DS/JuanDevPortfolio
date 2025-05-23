@@ -7,10 +7,20 @@ namespace Infrastructure.Persistence.Repositories
 {
 	public class ImageRepository : IImageRepository
 	{
-		public string? GetDefaultImageUrl(string directoryEntity)
+		public bool DeleteImage(string imagePath)
+		{
+			if (!string.IsNullOrEmpty(imagePath) && File.Exists(imagePath))
+			{
+				File.Delete(imagePath);
+				return true;
+			}
+			return false;
+		}
+
+		public string GetDefaultImageUrl(string directoryEntity)
 		{
 			if (string.IsNullOrWhiteSpace(directoryEntity))
-				return null;
+				return string.Empty;
 
 			var folderPath = Path.Combine(
 				Directory.GetCurrentDirectory(),      
@@ -23,7 +33,7 @@ namespace Infrastructure.Persistence.Repositories
 			if (!Directory.Exists(folderPath))
 			{
 				Log.ForContext(LoggerKeys.SharedLogs.ToString(), true).Error("La carpeta Default no existe: {Folder}", folderPath);
-				return null;
+				return string.Empty;
 			}
 
 			var allowedExt = new[] { ".jpg", ".jpeg", ".png", ".gif" };
@@ -34,7 +44,7 @@ namespace Infrastructure.Persistence.Repositories
 			if (file == null)
 			{
 				Log.ForContext(LoggerKeys.SharedLogs.ToString(), true).Error("No se encontró ninguna imagen en: {Folder}", folderPath);
-				return null;
+				return string.Empty;
 			}
 
 			var fileName = Path.GetFileName(file);
@@ -58,10 +68,6 @@ namespace Infrastructure.Persistence.Repositories
 				return null;
 			}
 
-			if (!string.IsNullOrEmpty(oldImagePath) && File.Exists(oldImagePath))
-			{
-				File.Delete(oldImagePath);
-			}
 
 			var root = Directory.GetCurrentDirectory();
 			var folderPath = Path.Combine(root, "Media", "Images", directoryEntity, id);
@@ -82,6 +88,11 @@ namespace Infrastructure.Persistence.Repositories
 
 			await using var stream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None);
 			await file.CopyToAsync(stream);
+
+			if (!string.IsNullOrEmpty(oldImagePath) && File.Exists(oldImagePath))
+			{
+				File.Delete(oldImagePath);
+			}
 
 			return fullPath;
 		}

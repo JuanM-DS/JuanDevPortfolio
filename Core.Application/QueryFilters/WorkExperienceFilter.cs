@@ -2,10 +2,10 @@
 {
 	public record WorkExperienceFilter
 	(
-		string? Position,
-		string? CompanyName,
-		DateTime? FromDate,
-		DateTime? ToDate,
-		Guid? ProfileId
+		string? Position = null,
+		string? CompanyName = null,
+		DateTime? FromDate = null,
+		DateTime? ToDate = null,
+		Guid? ProfileId = null
 	);
 }

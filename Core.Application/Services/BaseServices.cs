@@ -88,15 +88,21 @@ namespace Core.Application.Services
             return new(dataDto, HttpStatusCode.OK);
         }
 
-        public virtual async Task<AppResponse<TEntityDto>> UpdateAsync(SaveTEntityDto saveDto)
+        public virtual async Task<AppResponse<TEntityDto>> UpdateAsync(SaveTEntityDto saveDto, Guid Id)
         {
-            var entity = Mapper.Map<TEntity, SaveTEntityDto>(saveDto);
+            var entityById = await _repo.GetByIdAsNoTrackingAsync(Id);
+			if (entityById is null)
+				AppError.Create("No existe ninguna entidad con el Id enviado")
+					.BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
+					.Throw();
+
+			var entity = Mapper.Map<TEntity, SaveTEntityDto>(saveDto);
             if(entity is null)
                 AppError.Create("Hubo problemas al mappear la request")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
                     .Throw();
-
-            var result = await _repo.UpdateAsync(entity!);
+            entity!.Id = Id;
+			var result = await _repo.UpdateAsync(entity!);
             if(result)
                 AppError.Create("Hubo problemas al actualizar la entidad.")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
