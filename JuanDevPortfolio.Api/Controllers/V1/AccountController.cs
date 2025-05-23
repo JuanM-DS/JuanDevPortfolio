@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JuanDevPortfolio.Api.Controllers.V1
 {
 	[ApiVersion("1.0")]
-	public class AccountController : ControllerBase
+	public class AccountController : BaseController
 	{
 		private readonly IAccountServices accountServices;
 

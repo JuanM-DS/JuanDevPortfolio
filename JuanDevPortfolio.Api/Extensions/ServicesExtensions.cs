@@ -2,7 +2,6 @@
 using Core.Domain.Enumerables;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace JuanDevPortfolio.Api.Extensions
 {
@@ -89,7 +88,7 @@ namespace JuanDevPortfolio.Api.Extensions
 							Reference = new OpenApiReference
 							{
 								Type = ReferenceType.SecurityScheme,
-								Id = "Berarer"
+								Id = "Bearer"
 							} 
 						},
 						new List<string>()
@@ -98,24 +97,6 @@ namespace JuanDevPortfolio.Api.Extensions
 			});
 
 			return service;
-		}
-	}
-
-	public static class AppExtensions
-	{
-		public static WebApplication UseSwaggerExtencions(this WebApplication app)
-		{
-			if (app.Environment.IsDevelopment())
-			{
-				app.UseSwagger();
-				app.UseSwaggerUI(option =>
-				{
-					option.SwaggerEndpoint("/swagger/v1/swagger.json", "JuanDevPortFolio");
-					option.DefaultModelRendering(ModelRendering.Model);
-				});
-			}
-
-			return app;
 		}
 	}
 }
