@@ -17,7 +17,8 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		}
 
 		[HttpGet]
-		public IActionResult GetAll([FromQuery] CommentReferenceFilter filter)
+		[Route(nameof(GetAllWithFilter))]
+		public IActionResult GetAllWithFilter([FromQuery] CommentReferenceFilter filter)
 		{
 			var response = _commentReferencesServices.GetAll(filter);
 			return StatusCode((int)response.HttpStatusCode, response);
@@ -44,17 +45,10 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
-		[HttpPut("/{Id:Guid}")]
-		public async Task<IActionResult> UpdateAsync(SaveCommentReferenceDTO saveModel, [FromRoute]Guid Id)
+		[HttpPut("{id:Guid}")]
+		public async Task<IActionResult> UpdateAsync([FromBody] SaveCommentReferenceDTO saveModel, [FromRoute]Guid id)
 		{
-			var response = await _commentReferencesServices.UpdateAsync(saveModel, Id);
-			return StatusCode((int)response.HttpStatusCode, response);
-		}
-
-		[HttpDelete("{id:guid}")]
-		public async Task<IActionResult> DeleteAsync(Guid id)
-		{
-			var response = await _commentReferencesServices.DeleteAsync(id);
+			var response = await _commentReferencesServices.UpdateAsync(saveModel, id);
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
@@ -62,6 +56,13 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		public async Task<IActionResult> ConfirmCommentReferenceAsync(Guid id)
 		{
 			var response = await _commentReferencesServices.ConfirmCommentReferenceAsync(id);
+			return StatusCode((int)response.HttpStatusCode, response);
+		}
+		
+		[HttpDelete("{id:guid}")]
+		public async Task<IActionResult> DeleteAsync(Guid id)
+		{
+			var response = await _commentReferencesServices.DeleteAsync(id);
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 	}

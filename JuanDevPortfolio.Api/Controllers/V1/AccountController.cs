@@ -23,6 +23,7 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		}
 
 		[HttpPost]
+		[Route(nameof(SignInAsync))]
 		public async Task<IActionResult> SignInAsync(SignInRequestDTO SignIn)
 		{
 			var response = await accountServices.SignInAsync(SignIn);
@@ -30,6 +31,7 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		}
 
 		[HttpPost]
+		[Route(nameof(SignOutAsync))]
 		public async Task<IActionResult> SignOutAsync()
 		{
 			await accountServices.SignOutAsync();
@@ -37,6 +39,7 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		}
 
 		[HttpPost]
+		[Route(nameof(ForgotPasswordAsync))]
 		public async Task<IActionResult> ForgotPasswordAsync(ForgotPasswordRequestDTO ForgotPassword)
 		{
 			var response = await accountServices.ForgotPasswordAsync(ForgotPassword);
@@ -44,6 +47,7 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		}
 
 		[HttpPost]
+		[Route(nameof(ResetPasswordAsync))]
 		public async Task<IActionResult> ResetPasswordAsync(ResetPasswordRequestDTO ResetPassword)
 		{
 			var response = await accountServices.ResetPassword(ResetPassword);

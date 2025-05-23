@@ -15,17 +15,17 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 			userServices = UserServices;
 		}
 
-		[HttpPut("/{Id:Guid}")]
-		public async Task<IActionResult> UpdateAsync(SaveUserDTO save, [FromRoute]Guid Id)
+		[HttpPut("{id:Guid}")]
+		public async Task<IActionResult> UpdateAsync([FromBody] SaveUserDTO save, [FromRoute]Guid id)
 		{
-			var response = await userServices.UpdateAsync(save, Id);
+			var response = await userServices.UpdateAsync(save, id);
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
-		[HttpDelete("/{Id:Guid}")]
-		public async Task<IActionResult> DeleteAsync(Guid Id)
+		[HttpDelete("{id:Guid}")]
+		public async Task<IActionResult> DeleteAsync(Guid id)
 		{
-			var response = await userServices.DeleteAsync(Id);
+			var response = await userServices.DeleteAsync(id);
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 

@@ -17,7 +17,8 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		}
 
 		[HttpGet]
-		public IActionResult GetAll([FromQuery] TechnologyItemFilter filter)
+		[Route(nameof(GetAllWithFilter))]
+		public IActionResult GetAllWithFilter([FromQuery] TechnologyItemFilter filter)
 		{
 			var response = _technologyItemServices.GetAll(filter);
 			return StatusCode((int)response.HttpStatusCode, response);
@@ -44,10 +45,10 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
-		[HttpPut("/{Id:Guid}")]
-		public async Task<IActionResult> UpdateAsync(SaveTechnologyItemDTO saveModel, [FromRoute] Guid Id)
+		[HttpPut("{id:Guid}")]
+		public async Task<IActionResult> UpdateAsync([FromBody] SaveTechnologyItemDTO saveModel, [FromRoute] Guid id)
 		{
-			var response = await _technologyItemServices.UpdateAsync(saveModel, Id);
+			var response = await _technologyItemServices.UpdateAsync(saveModel, id);
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
