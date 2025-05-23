@@ -1,8 +1,11 @@
-﻿using Core.Application.Interfaces.Helpers;
+﻿using Core.Application.Interfaces.Services;
 using Core.Application.Wrappers;
 using Core.Domain.Entities;
 using Infrastructure.Authentication.Context;
 using Infrastructure.Authentication.CustomEntities;
+using Infrastructure.Authentication.Interfaces;
+using Infrastructure.Authentication.Repositories;
+using Infrastructure.Authentication.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -33,7 +36,10 @@ namespace Infrastructure.Authentication
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultTokenProviders();
 
-            service.AddJwtConfigurations(confi);
+            service.AddScoped<IAccountServices, AccountServices>()
+                .AddScoped<IUserServices, UserServices>()
+				.AddScoped<IUserRepository, UserRepository>()
+				.AddJwtConfigurations(confi);
 
             return service;
         }

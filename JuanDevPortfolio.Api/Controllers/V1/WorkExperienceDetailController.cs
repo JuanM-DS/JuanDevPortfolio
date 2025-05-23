@@ -17,7 +17,8 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		}
 
 		[HttpGet]
-		public IActionResult GetAll([FromQuery] WorkExperienceDetailFilter filter)
+		[Route(nameof(GetAllWithFilter))]
+		public IActionResult GetAllWithFilter([FromQuery] WorkExperienceDetailFilter filter)
 		{
 			var response = _workExperienceDetailServices.GetAll(filter);
 			return StatusCode((int)response.HttpStatusCode, response);
@@ -44,10 +45,10 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
-		[HttpPut]
-		public async Task<IActionResult> UpdateAsync(SaveWorkExperienceDetailDTO saveModel, [FromRoute] Guid Id)
+		[HttpPut("{id:Guid}")]
+		public async Task<IActionResult> UpdateAsync([FromBody] SaveWorkExperienceDetailDTO saveModel, [FromRoute] Guid id)
 		{
-			var response = await _workExperienceDetailServices.UpdateAsync(saveModel, Id);
+			var response = await _workExperienceDetailServices.UpdateAsync(saveModel, id);
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 

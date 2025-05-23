@@ -5,14 +5,7 @@ using JuanDevPortfolio.Api.Extensions;
 using JuanDevPortfolio.Api.Middlewares;
 using Serilog;
 
-var builder = WebApplication.CreateBuilder(new WebApplicationOptions
-{
-	WebRootPath = "Media",
-	Args = args,
-	ApplicationName = typeof(Program).Assembly.FullName,
-	ContentRootPath = Directory.GetCurrentDirectory(),
-	EnvironmentName = Environments.Staging
-});
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions {WebRootPath = "Media"});
 
 
 builder.Services.AddControllers();
@@ -36,7 +29,7 @@ if (app.Environment.IsDevelopment())
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
-app.UseStaticFiles(new StaticFileOptions { RequestPath = "/Images" });
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

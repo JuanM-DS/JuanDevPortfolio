@@ -17,7 +17,8 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		}
 
 		[HttpGet]
-		public IActionResult GetAll([FromQuery] ProfileFilter filter)
+		[Route(nameof(GetAllWithFilter))]
+		public IActionResult GetAllWithFilter([FromQuery] ProfileFilter filter)
 		{
 			var response = _profileServices.GetAll(filter);
 			return StatusCode((int)response.HttpStatusCode, response);
@@ -44,8 +45,8 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
-		[HttpPut]
-		public async Task<IActionResult> UpdateAsync(SaveProfileDTO saveModel, [FromRoute] Guid Id)
+		[HttpPut("{Id:Guid}")]
+		public async Task<IActionResult> UpdateAsync([FromBody] SaveProfileDTO saveModel, [FromRoute] Guid Id)
 		{
 			var response = await _profileServices.UpdateAsync(saveModel, Id);
 			return StatusCode((int)response.HttpStatusCode, response);

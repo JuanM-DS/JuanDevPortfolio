@@ -18,7 +18,8 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		}
 
 		[HttpGet]
-		public IActionResult GetAll([FromQuery] SkillFilter filter)
+		[Route(nameof(GetAllWithFilter))]
+		public IActionResult GetAllWithFilter([FromQuery] SkillFilter filter)
 		{
 			var response = _skillServices.GetAll(filter);
 			return StatusCode((int)response.HttpStatusCode, response);
@@ -45,10 +46,18 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
-		[HttpPut]
-		public async Task<IActionResult> UpdateAsync(SaveSkillDTO saveModel, [FromRoute] Guid Id)
+		[HttpPost]
+		[Route(nameof(AddTechnologyItems))]
+		public async Task<IActionResult> AddTechnologyItems(Guid ProjectId, List<Guid> itemsId)
 		{
-			var response = await _skillServices.UpdateAsync(saveModel, Id);
+			var response = await _skillServices.AddTechnologyItemsAsync(ProjectId, itemsId);
+			return StatusCode((int)response.HttpStatusCode, response);
+		}
+		
+		[HttpPut("{id:Guid}")]
+		public async Task<IActionResult> UpdateAsync([FromBody] SaveSkillDTO saveModel, [FromRoute] Guid id)
+		{
+			var response = await _skillServices.UpdateAsync(saveModel, id);
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
@@ -56,13 +65,6 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		public async Task<IActionResult> DeleteAsync(Guid id)
 		{
 			var response = await _skillServices.DeleteAsync(id);
-			return StatusCode((int)response.HttpStatusCode, response);
-		}
-
-		[HttpPost]
-		public async Task<IActionResult> AddTechnologyItems(Guid ProjectId, List<Guid> itemsId)
-		{
-			var response = await _skillServices.AddTechnologyItemsAsync(ProjectId, itemsId);
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 	}

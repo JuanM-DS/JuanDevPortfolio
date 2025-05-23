@@ -17,7 +17,8 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		}
 
 		[HttpGet]
-		public IActionResult GetAll([FromQuery] ProjectImageFilter filter)
+		[Route(nameof(GetAllWithFilter))]
+		public IActionResult GetAllWithFilter([FromQuery] ProjectImageFilter filter)
 		{
 			var response = _projectImageServices.GetAll(filter);
 			return StatusCode((int)response.HttpStatusCode, response);
@@ -44,10 +45,10 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
-		[HttpPut]
-		public async Task<IActionResult> UpdateAsync(SaveProjectImageDTO saveModel, [FromRoute] Guid Id)
+		[HttpPut("{id:Guid}")]
+		public async Task<IActionResult> UpdateAsync([FromBody] SaveProjectImageDTO saveModel, [FromRoute] Guid id)
 		{
-			var response = await _projectImageServices.UpdateAsync(saveModel,Id);
+			var response = await _projectImageServices.UpdateAsync(saveModel, id);
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
