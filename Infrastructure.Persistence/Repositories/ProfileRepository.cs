@@ -2,6 +2,7 @@
 using Core.Application.QueryFilters;
 using Core.Domain.Entities;
 using Infrastructure.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repositories
 {
@@ -22,6 +23,11 @@ namespace Infrastructure.Persistence.Repositories
 				query = query.Where(x => x.AccountId == filter.AccountId);
 
 			return query.AsEnumerable();
+		}
+
+		public async Task<Profile?> GetByAccountAsync(Guid AccountId)
+		{
+			return await _entity.FirstOrDefaultAsync(x => x.AccountId == AccountId);
 		}
 	}
 }

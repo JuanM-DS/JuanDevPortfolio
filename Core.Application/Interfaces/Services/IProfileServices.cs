@@ -8,5 +8,7 @@ namespace Core.Application.Interfaces.Services
 	public interface IProfileServices : IBaseServices<Profile, ProfileDTO, SaveProfileDTO>
     {
 		public AppResponse<List<ProfileDTO>> GetAll(ProfileFilter filter);
+		public Task<AppResponse<ProfileDTO?>> GetCurrentProfileAsync();
+		public Task<AppResponse<ProfileDTO?>> GetByAccountIdAsync(Guid id);
 	}
 }

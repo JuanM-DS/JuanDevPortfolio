@@ -194,8 +194,8 @@ namespace Infrastructure.Authentication.Services
 
 		public async Task<AppResponse<string>> GenerateResetTokenAsync()
 		{
-			var userName = httpContextProvider.GetCurrentUserName();
-			var user = await userManager.FindByNameAsync(userName ?? "");
+			var userName = httpContextProvider.GetCurrentUserId();
+			var user = await userManager.FindByIdAsync(userName.ToString() ?? "");
 			if(userName is null)
 				AppError.Create($"No existe ningún usuario en sesión")
 					.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)

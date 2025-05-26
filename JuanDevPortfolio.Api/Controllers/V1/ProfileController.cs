@@ -69,6 +69,36 @@ namespace YourNamespace.Controllers
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
+		[HttpGet]
+		[Route(nameof(GetCurrentProfileAsync))]
+		[SwaggerOperation(
+			Summary = "Get current profile",
+			Description = "Retrieve the profile of current user"
+		)]
+		[SwaggerResponse((int)HttpStatusCode.OK, "Profile retrieved successfully")]
+		[SwaggerResponse((int)HttpStatusCode.NoContent, "Profile not found")]
+		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "An error occurred while retrieving the profile")]
+		public async Task<IActionResult> GetCurrentProfileAsync()
+		{
+			var response = await _profileServices.GetCurrentProfileAsync();
+			return StatusCode((int)response.HttpStatusCode, response);
+		}
+
+		[HttpGet]
+		[Route(nameof(GetCurrentProfileAsync))]
+		[SwaggerOperation(
+			Summary = "Get profile",
+			Description = "Retrieve a profile by a account id"
+		)]
+		[SwaggerResponse((int)HttpStatusCode.OK, "Profile retrieved successfully")]
+		[SwaggerResponse((int)HttpStatusCode.NoContent, "Profile not found")]
+		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "An error occurred while retrieving the profile")]
+		public async Task<IActionResult> GetByAccountIdAsync(Guid id)
+		{
+			var response = await _profileServices.GetByAccountIdAsync(id);
+			return StatusCode((int)response.HttpStatusCode, response);
+		}
+
 		[HttpPost]
 		[SwaggerOperation(
 			Summary = "Create a new profile",
