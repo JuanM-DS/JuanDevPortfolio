@@ -20,12 +20,12 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 
 		[HttpPost]
 		[SwaggerOperation(
-			Summary = "Register a user",
-			Description = "Receives the necessary credentials to register a user in the application"
+			Summary = "Register a User",
+			Description = "Receives the necessary credentials to register a User in the application"
 		)]
 		[Consumes("multipart/form-data")]
 		[SwaggerResponse((int)HttpStatusCode.OK, "The registration was successful")]
-		[SwaggerResponse((int)HttpStatusCode.BadRequest, "The client sent invalid information for user registration")]
+		[SwaggerResponse((int)HttpStatusCode.BadRequest, "The client sent invalid information for User registration")]
 		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "An error occurred during register")]
 		[SwaggerResponse((int)HttpStatusCode.UnsupportedMediaType, "Invalid content type")]
 		public async Task<IActionResult> RegisterAsync([FromForm]SaveUserDTO Save)
@@ -38,7 +38,7 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		[HttpPost]
 		[Route(nameof(SignInAsync))]
 		[SwaggerOperation(
-			Summary = "Sign in a user",
+			Summary = "Sign in a User",
 			Description = "Receives the credentials and returns a token if authentication is successful"
 		)]
 		[Consumes("application/json")]
@@ -55,13 +55,13 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		[HttpPost]
 		[Route(nameof(SignOutAsync))]
 		[SwaggerOperation(
-			Summary = "Sign out a user",
-			Description = "Terminates the user's session or token"
+			Summary = "Sign out a User",
+			Description = "Terminates the User's session or token"
 		)]
 		[SwaggerResponse((int)HttpStatusCode.OK, "User signed out successfully")]
 		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "An error occurred while signing out")]
 		[SwaggerResponse((int)HttpStatusCode.Forbidden, "You do not have permission to access this endpoint")]
-		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "An error occurred while registering the user")]
+		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "An error occurred while registering the User")]
 		public async Task<IActionResult> SignOutAsync()
 		{
 			await accountServices.SignOutAsync();
@@ -72,7 +72,7 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		[Route(nameof(ForgotPasswordAsync))]
 		[SwaggerOperation(
 			Summary = "Forgot password",
-			Description = "Sends a reset password link to the user email"
+			Description = "Sends a reset password link to the User email"
 		)]
 		[Consumes("application/json")]
 		[SwaggerResponse((int)HttpStatusCode.OK, "Reset password link sent successfully")]
@@ -88,7 +88,7 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		[Route(nameof(ResetPasswordAsync))]
 		[SwaggerOperation(
 			Summary = "Reset password",
-			Description = "Receives the reset token and new password to update the user credentials"
+			Description = "Receives the reset token and new password to update the User credentials"
 		)]
 		[Consumes("application/json")]
 		[SwaggerResponse((int)HttpStatusCode.OK, "Password reset successfully")]

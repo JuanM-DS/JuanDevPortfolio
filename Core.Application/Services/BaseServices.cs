@@ -58,9 +58,9 @@ namespace Core.Application.Services
             return new(Id, HttpStatusCode.OK);
         }
 
-        public virtual AppResponse<List<TEntityDto>> GetAll()
+        public virtual async Task<AppResponse<List<TEntityDto>>> GetAll()
         {
-            var data = _repo.GetAll().ToList();
+            var data = await Task.FromResult(_repo.GetAll().ToList());
             if (data is null || !data.Any())
                 return new(HttpStatusCode.NoContent, "No hay elementos para mostrar");
 

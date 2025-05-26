@@ -50,9 +50,9 @@ namespace YourNamespace.Controllers
 		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "An error occurred while retrieving comment references")]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized, "Authentication required")]
 		[SwaggerResponse((int)HttpStatusCode.Forbidden, "Insufficient permissions")]
-		public IActionResult GetAll()
+		public async Task<IActionResult> GetAll()
 		{
-			var response = _commentReferencesServices.GetAll();
+			var response = await _commentReferencesServices.GetAll();
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 

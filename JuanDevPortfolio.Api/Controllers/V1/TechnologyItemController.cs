@@ -47,9 +47,9 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		[SwaggerResponse((int)HttpStatusCode.OK, "Full technology list retrieved")]
 		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "Error loading technology items")]
 		[SwaggerResponse((int)HttpStatusCode.NoContent, "Item not found")]
-		public IActionResult GetAll()
+		public async Task<IActionResult> GetAll()
 		{
-			var response = _technologyItemServices.GetAll();
+			var response = await _technologyItemServices.GetAll();
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 

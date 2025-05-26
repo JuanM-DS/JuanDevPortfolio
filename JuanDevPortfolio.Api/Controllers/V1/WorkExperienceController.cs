@@ -46,9 +46,9 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		[SwaggerResponse((int)HttpStatusCode.OK, "Full work experiences list retrieved")]
 		[SwaggerResponse((int)HttpStatusCode.NoContent, "No work experiences available")]
 		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "Error loading work experiences")]
-		public IActionResult GetAll()
+		public async Task<IActionResult> GetAll()
 		{
-			var response = _workExperienceServices.GetAll();
+			var response = await _workExperienceServices.GetAll();
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
