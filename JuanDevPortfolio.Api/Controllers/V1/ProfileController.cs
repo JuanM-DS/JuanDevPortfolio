@@ -85,7 +85,7 @@ namespace YourNamespace.Controllers
 		}
 
 		[HttpGet]
-		[Route(nameof(GetCurrentProfileAsync))]
+		[Route(nameof(GetByAccountIdAsync))]
 		[SwaggerOperation(
 			Summary = "Get profile",
 			Description = "Retrieve a profile by a account id"
