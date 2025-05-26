@@ -11,6 +11,12 @@ namespace Infrastructure.Persistence.Repositories
             :base(context)
         {}
 
+		public override Task<bool> UpdateAsync(CommentReference entity)
+		{
+			entity.IsConfirmed = false;
+			return base.UpdateAsync(entity);
+		}
+
 		public IEnumerable<CommentReference> GetAll(CommentReferenceFilter filter)
 		{
 			var query = _entity.AsQueryable();

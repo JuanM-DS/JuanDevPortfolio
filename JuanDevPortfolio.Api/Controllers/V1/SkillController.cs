@@ -47,9 +47,9 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		[SwaggerResponse((int)HttpStatusCode.OK, "Skills retrieved successfully")]
 		[SwaggerResponse((int)HttpStatusCode.NoContent, "No skills found")]
 		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "An error occurred while retrieving skills")]
-		public IActionResult GetAll()
+		public async Task<IActionResult> GetAll()
 		{
-			var response = _skillServices.GetAll();
+			var response = await _skillServices.GetAll();
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 

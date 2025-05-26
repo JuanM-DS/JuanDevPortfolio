@@ -26,11 +26,11 @@ namespace Infrastructure.Persistence.Context.Interceptors
 				switch (item.State)
 				{
 					case EntityState.Modified:
-						item.Entity.UpdatedBy = httpProvider.GetCurrentUserName() ?? "Anonimus User";
+						item.Entity.UpdatedBy = httpProvider.GetCurrentUserId().ToString() ?? "Anonimus User";
 						item.Entity.Updated = DateTime.UtcNow;
 						break;
 					case EntityState.Added:
-						item.Entity.CreatedBy = httpProvider.GetCurrentUserName() ?? "Anonimus User";
+						item.Entity.CreatedBy = httpProvider.GetCurrentUserId().ToString() ?? "Anonimus User";
 						item.Entity.Created = DateTime.UtcNow;
 						break;
 				}

@@ -2,7 +2,7 @@
 {
 	public interface IHttpContextProvider
 	{
-		public string? GetCurrentUserName();
+		public Guid? GetCurrentUserId();
 
 		public List<string>? CurrentUserRoles();
 	}

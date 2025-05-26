@@ -2,7 +2,7 @@
 
 namespace Core.Application.Wrappers
 {
-    public class AppResponse
+	public class AppResponse
     {
         public string? Message { get; set; } 
         public bool Succeded { get; set; }
@@ -62,5 +62,12 @@ namespace Core.Application.Wrappers
         {
             return new AppResponse<T>(errors, code, message);
         }
-    }
+
+		public static AppResponse<T> AddError<T>(this AppResponse<T> response, AppError error)
+		{
+			response.Errors = response.Errors ?? [];
+			response.Errors.Add(error);
+            return response;
+		}
+	}
 }

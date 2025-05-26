@@ -47,9 +47,9 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		[SwaggerResponse((int)HttpStatusCode.OK, "Full details list retrieved")]
 		[SwaggerResponse((int)HttpStatusCode.NoContent, "No details available")]
 		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "Error loading details")]
-		public IActionResult GetAll()
+		public async Task<IActionResult> GetAll()
 		{
-			var response = _workExperienceDetailServices.GetAll();
+			var response = await _workExperienceDetailServices.GetAll();
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 

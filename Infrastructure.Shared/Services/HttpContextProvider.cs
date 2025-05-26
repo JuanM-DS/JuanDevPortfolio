@@ -12,14 +12,16 @@ namespace Infrastructure.Shared.Services
 		{
 			this.accesor = accesor;
 		}
-		public string? GetCurrentUserName()
+		public Guid? GetCurrentUserId()
 		{
 			if (accesor is null)
 				return null;
 
-			var userName = accesor.HttpContext?.User.Identity?.Name;
-			
-			return userName;
+			var idClaim = accesor.HttpContext?.User.Claims.FirstOrDefault(x=>x.Type == "UserId");
+			if (string.IsNullOrEmpty(idClaim?.Value))
+				return null;
+
+			return Guid.Parse(idClaim.Value);
 		}
 
 		public List<string>? CurrentUserRoles()

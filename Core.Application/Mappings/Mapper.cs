@@ -83,6 +83,7 @@ namespace Core.Application.Mappings
 		[MapperIgnoreSource(nameof(Profile.Skills))]
 		[MapperIgnoreSource(nameof(Profile.Experiences))]
 		[MapperIgnoreSource(nameof(Profile.Projects))]
+		[MapperIgnoreTarget(nameof(ProfileDTO.User))]
 		private static partial ProfileDTO Map(Profile source);
 		#endregion
 

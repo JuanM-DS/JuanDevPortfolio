@@ -1,5 +1,7 @@
 ﻿using Asp.Versioning;
 using Core.Domain.Enumerables;
+using FluentValidation;
+using JuanDevPortfolio.Api.Middlewares;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -49,6 +51,18 @@ namespace JuanDevPortfolio.Api.Extensions
 				option.AssumeDefaultVersionWhenUnspecified = true;
 				option.ReportApiVersions = true;
 			});
+
+			return service;
+		}
+
+		public static IServiceCollection AddValidationsExtensions(this IServiceCollection service)
+		{
+			service.AddControllers(x =>
+			{
+				x.Filters.Add<ValidatorFilter>();
+			});
+
+			service.AddValidatorsFromAssemblyContaining<Program>();
 
 			return service;
 		}

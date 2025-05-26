@@ -15,6 +15,6 @@ namespace Core.Application.Interfaces.Services
 
         public Task<AppResponse<TEntityDto?>> GetByIdAsync(Guid Id);
 
-        public AppResponse<List<TEntityDto>> GetAll();
+        public Task<AppResponse<List<TEntityDto>>> GetAll();
     }
 }

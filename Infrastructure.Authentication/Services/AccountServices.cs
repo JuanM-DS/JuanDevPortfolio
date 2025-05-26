@@ -123,7 +123,7 @@ namespace Infrastructure.Authentication.Services
 				{"UserId", user!.Id.ToString()}
 			};
 			var finalUrl = uriServices.GetURL("RessetPassword", parameters);
-			var viewModel = new ForgotPasswordViewModel(user.UserName!, finalUrl, DateTime.UtcNow.AddHours(1).ToString(), DateTime.UtcNow.Year);
+			var viewModel = new ForgotPasswordViewModel(user.FirstName!, finalUrl, DateTime.UtcNow.AddHours(1).ToString(), DateTime.UtcNow.Year);
 			var emailRequest = new EmailRequestDTO(user!.Email!, "Cambiar Contraseña");
 			var result = await emailServices.SendTemplateAsync(emailRequest, "ForgotPasswordEmail", viewModel);
 			if(!result)
@@ -194,8 +194,8 @@ namespace Infrastructure.Authentication.Services
 
 		public async Task<AppResponse<string>> GenerateResetTokenAsync()
 		{
-			var userName = httpContextProvider.GetCurrentUserName();
-			var user = await userManager.FindByNameAsync(userName ?? "");
+			var userName = httpContextProvider.GetCurrentUserId();
+			var user = await userManager.FindByIdAsync(userName.ToString() ?? "");
 			if(userName is null)
 				AppError.Create($"No existe ningún usuario en sesión")
 					.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)

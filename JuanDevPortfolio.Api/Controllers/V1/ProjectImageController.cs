@@ -47,9 +47,9 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		[SwaggerResponse((int)HttpStatusCode.OK, "Project images retrieved successfully")]
 		[SwaggerResponse((int)HttpStatusCode.NoContent, "No project images found")]
 		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "An error occurred while retrieving project images")]
-		public IActionResult GetAll()
+		public async Task<IActionResult> GetAll()
 		{
-			var response = _projectImageServices.GetAll();
+			var response = await _projectImageServices.GetAll();
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 

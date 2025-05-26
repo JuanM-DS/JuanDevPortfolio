@@ -1,0 +1,53 @@
+﻿@using Core.Application.DTOs.Email.TempleteViewModels
+@model CommentReferenceEmail
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comentario confirmado</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f0faf0; font-family: Arial, sans-serif;">
+    <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="max-width: 600px; margin: 40px auto;">
+        <tr>
+            <td style="padding: 20px; background: #2a7c2a; text-align: center; border-radius: 8px 8px 0 0;">
+                <h1 style="color: #ffffff; margin: 0;">¡Comentario confirmado!</h1>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 30px 25px; background: #ffffff;">
+                <p style="font-size: 16px; color: #333333; margin: 0 0 20px 0;">
+                    Hola @Model.UserName,
+                </p>
+
+                <p style="font-size: 15px; color: #555555; line-height: 1.6;">
+                    Te escribimos para informarte que tu comentario de referencia ha sido confirmado exitosamente en nuestro sistema.
+                </p>
+
+                <div style="background-color: #e8f5e8; padding: 20px; border-radius: 5px; margin: 25px 0; border-left: 4px solid #2a7c2a;">
+                    <p style="font-size: 15px; color: #2a7c2a; margin: 0; font-weight: bold;">
+                        ✓ Tu comentario ha sido procesado y confirmado
+                    </p>
+                </div>
+
+                <p style="font-size: 15px; color: #555555; line-height: 1.6;">
+                    Gracias por tomarte el tiempo de compartir tu experiencia. Tu retroalimentación es muy valiosa para nosotros y nos ayuda a seguir mejorando nuestros servicios.
+                </p>
+
+                <p style="font-size: 14px; color: #777777; line-height: 1.6; margin-top: 25px;">
+                    Si tienes alguna pregunta o necesitas asistencia adicional, no dudes en contactarnos.
+                </p>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 20px; background: #f5f5f5; border-radius: 0 0 8px 8px; text-align: center;">
+                <p style="font-size: 12px; color: #666666; margin: 0;">
+                    © @DateTime.Now.Year JuanDevPortfolio. Todos los derechos reservados.
+                </p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

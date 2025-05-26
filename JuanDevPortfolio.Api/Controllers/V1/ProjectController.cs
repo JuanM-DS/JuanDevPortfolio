@@ -47,9 +47,9 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		[SwaggerResponse((int)HttpStatusCode.OK, "Projects retrieved successfully")]
 		[SwaggerResponse((int)HttpStatusCode.NoContent, "No projects found")]
 		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "An error occurred while retrieving projects")]
-		public IActionResult GetAll()
+		public async Task<IActionResult> GetAll()
 		{
-			var response = _projectServices.GetAll();
+			var response = await _projectServices.GetAll();
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
