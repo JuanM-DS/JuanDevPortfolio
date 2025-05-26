@@ -20,7 +20,7 @@ namespace Infrastructure.Persistence.Repositories
             _entity = context.Set<TEntity>();
         }
 
-        public async Task<bool> CreateAsync(TEntity entity)
+        public virtual async Task<bool> CreateAsync(TEntity entity)
         {
             try
             {
@@ -35,7 +35,7 @@ namespace Infrastructure.Persistence.Repositories
             }
         }
 
-        public async Task<bool> DeleteAsync(TEntity entity)
+        public virtual async Task<bool> DeleteAsync(TEntity entity)
         {
             try
             {
@@ -50,12 +50,12 @@ namespace Infrastructure.Persistence.Repositories
             }
         }
 
-        public IEnumerable<TEntity> GetAll()
+        public virtual IEnumerable<TEntity> GetAll()
         {
             return _entity.AsEnumerable();
         }
 
-        public IEnumerable<TEntity> GetAll(params Expression<Func<TEntity, object>>[] properties)
+        public virtual IEnumerable<TEntity> GetAll(params Expression<Func<TEntity, object>>[] properties)
         {
             var query = _entity.AsQueryable();
 
@@ -67,12 +67,12 @@ namespace Infrastructure.Persistence.Repositories
             return query.AsEnumerable();
         }
 
-        public async Task<TEntity?> GetByIdAsync(Guid id)
+        public virtual async Task<TEntity?> GetByIdAsync(Guid id)
         {
             return await _entity.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<TEntity?> GetByIdAsync(Guid id, params Expression<Func<TEntity, object>>[] properties)
+        public virtual async Task<TEntity?> GetByIdAsync(Guid id, params Expression<Func<TEntity, object>>[] properties)
         {
             var query = _entity.AsQueryable();
 
@@ -84,7 +84,7 @@ namespace Infrastructure.Persistence.Repositories
             return await query.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<bool> UpdateAsync(TEntity entity)
+        public virtual async Task<bool> UpdateAsync(TEntity entity)
         {
             try
             {
@@ -99,12 +99,12 @@ namespace Infrastructure.Persistence.Repositories
             }
         }
 
-		public IEnumerable<TEntity> GetAllAsNoTracking()
+		public virtual IEnumerable<TEntity> GetAllAsNoTracking()
 		{
 			return _entity.AsNoTracking().AsEnumerable();
 		}
 
-		public IEnumerable<TEntity> GetAllAsNoTracking(params Expression<Func<TEntity, object>>[] properties)
+		public virtual IEnumerable<TEntity> GetAllAsNoTracking(params Expression<Func<TEntity, object>>[] properties)
 		{
 			var query = _entity.AsNoTracking().AsQueryable();
 
@@ -116,12 +116,12 @@ namespace Infrastructure.Persistence.Repositories
 			return query.AsEnumerable();
 		}
 
-		public async Task<TEntity?> GetByIdAsNoTrackingAsync(Guid id)
+		public virtual async Task<TEntity?> GetByIdAsNoTrackingAsync(Guid id)
 		{
 			return await _entity.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 		}
 
-		public async Task<TEntity?> GetByIdAsNoTrackingAsync(Guid id, params Expression<Func<TEntity, object>>[] properties)
+		public virtual async Task<TEntity?> GetByIdAsNoTrackingAsync(Guid id, params Expression<Func<TEntity, object>>[] properties)
 		{
 			var query = _entity.AsNoTracking().AsQueryable();
 
@@ -132,6 +132,5 @@ namespace Infrastructure.Persistence.Repositories
 
 			return await query.FirstOrDefaultAsync(x => x.Id == id);
 		}
-
 	}
 }

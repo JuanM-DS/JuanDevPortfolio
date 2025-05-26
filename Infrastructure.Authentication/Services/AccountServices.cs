@@ -123,7 +123,7 @@ namespace Infrastructure.Authentication.Services
 				{"UserId", user!.Id.ToString()}
 			};
 			var finalUrl = uriServices.GetURL("RessetPassword", parameters);
-			var viewModel = new ForgotPasswordViewModel(user.UserName!, finalUrl, DateTime.UtcNow.AddHours(1).ToString(), DateTime.UtcNow.Year);
+			var viewModel = new ForgotPasswordViewModel(user.FirstName!, finalUrl, DateTime.UtcNow.AddHours(1).ToString(), DateTime.UtcNow.Year);
 			var emailRequest = new EmailRequestDTO(user!.Email!, "Cambiar Contraseña");
 			var result = await emailServices.SendTemplateAsync(emailRequest, "ForgotPasswordEmail", viewModel);
 			if(!result)

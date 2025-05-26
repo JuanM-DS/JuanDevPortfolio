@@ -166,5 +166,23 @@ namespace Infrastructure.Authentication.Services
 
 			return new(true, HttpStatusCode.NoContent);
 		}
+
+		public async Task<AppResponse<UserDTO?>> GetByIdAsync(Guid Id)
+		{
+			var appUser = await userManager.FindByIdAsync(Id.ToString());
+			if (appUser is null)
+				return new(HttpStatusCode.NoContent);
+
+
+			var dto = new UserDTO(
+				Id: appUser!.Id,
+				Email: appUser.Email!,
+				Roles: (await userManager.GetRolesAsync(appUser)).Select(r => r.ToString()).ToImmutableList(),
+				ProfileImageUrl: appUser.ProfileImageUrl,
+				FirstName: appUser.FirstName
+			);
+
+			return new(dto, HttpStatusCode.OK);
+		}
 	}
 }

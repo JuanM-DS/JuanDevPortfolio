@@ -8,6 +8,7 @@ namespace Core.Application.Interfaces.Services
 		public Task<AppResponse<UserDTO>> UpdateAsync(SaveUserDTO updateUser, Guid Id);
 		public Task<AppResponse<bool>> DeleteAsync(Guid userId);
         public Task<AppResponse<UserDTO?>> GetByEmailAsync(string email);
+		public Task<AppResponse<UserDTO?>> GetByIdAsync(Guid Id);
 		public Task<AppResponse<List<UserDTO>>> GetAll();
 	}
 }
