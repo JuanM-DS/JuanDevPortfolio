@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System.Collections.Immutable;
 
 namespace Core.Application.DTOs.Authentication
 {
-	public record SaveUserDTO(string Email, string Password, string ConfirmPassword, IImmutableList<string> Roles, string FirstName, IFormFile ImageFile);
+	public record SaveUserDTO(string Email, string Password, string ConfirmPassword, List<string> Roles, string FirstName, IFormFile? ImageFile);
 
-	public record UserDTO(Guid Id, string Email, IImmutableList<string> Roles, string ProfileImageUrl, string FirstName);
+	public record UserDTO(Guid Id, string Email, List<string> Roles, string ProfileImageUrl, string FirstName);
 }

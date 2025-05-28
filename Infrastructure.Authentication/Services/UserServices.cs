@@ -36,7 +36,7 @@ namespace Infrastructure.Authentication.Services
 				var dto = new UserDTO(
 					Id: x!.Id,
 					Email: x.Email!,
-					Roles: (await userManager.GetRolesAsync(x)).Select(r => r.ToString()).ToImmutableList(),
+					Roles: (await userManager.GetRolesAsync(x)).Select(r => r.ToString()).ToList(),
 					ProfileImageUrl: x.ProfileImageUrl,
 					FirstName: x.FirstName
 				);
@@ -59,7 +59,7 @@ namespace Infrastructure.Authentication.Services
 			var dto = new UserDTO(
 				Id: appUser!.Id,
 				Email: appUser.Email!,
-				Roles: (await userManager.GetRolesAsync(appUser)).Select(r => r.ToString()).ToImmutableList(),
+				Roles: (await userManager.GetRolesAsync(appUser)).Select(r => r.ToString()).ToList(),
 				ProfileImageUrl: appUser.ProfileImageUrl,
 				FirstName: appUser.FirstName
 			);
@@ -133,7 +133,7 @@ namespace Infrastructure.Authentication.Services
 			var dto = new UserDTO(
 				Id: appUser!.Id,
 				Email: appUser.Email!,
-				Roles: (await userManager.GetRolesAsync(appUser)).Select(x=>x.ToString()).ToImmutableList(),
+				Roles: (await userManager.GetRolesAsync(appUser)).Select(x=>x.ToString()).ToList(),
 				ProfileImageUrl: appUser.ProfileImageUrl,
 				FirstName: appUser.FirstName
 			);
@@ -177,7 +177,7 @@ namespace Infrastructure.Authentication.Services
 			var dto = new UserDTO(
 				Id: appUser!.Id,
 				Email: appUser.Email!,
-				Roles: (await userManager.GetRolesAsync(appUser)).Select(r => r.ToString()).ToImmutableList(),
+				Roles: (await userManager.GetRolesAsync(appUser)).Select(r => r.ToString()).ToList(),
 				ProfileImageUrl: appUser.ProfileImageUrl,
 				FirstName: appUser.FirstName
 			);

@@ -25,11 +25,11 @@ builder.Services
 builder.Host.UseSerilog();
 
 var app = builder.Build();
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseExceptionHandler(o => { });
 app.UseSwaggerExtencions();
-app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();

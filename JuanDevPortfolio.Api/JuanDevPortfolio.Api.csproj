@@ -29,10 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Media\Images\TechnologyItem\" />
     <Folder Include="Media\Images\User\" />
-    <Folder Include="Media\Images\CompanyLogo\" />
-    <Folder Include="Media\Images\Project\" />
   </ItemGroup>
 
 </Project>

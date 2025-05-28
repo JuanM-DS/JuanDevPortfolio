@@ -26,8 +26,7 @@ namespace Infrastructure.Persistence.Repositories
 				Directory.GetCurrentDirectory(),      
 				"Media",
 				"Images",
-				directoryEntity,
-				"default"
+				directoryEntity
 			);
 
 			if (!Directory.Exists(folderPath))
@@ -53,7 +52,6 @@ namespace Infrastructure.Persistence.Repositories
 				"media",
 				"images",
 				directoryEntity,
-				"default",
 				fileName
 			).Replace("\\", "/");
 

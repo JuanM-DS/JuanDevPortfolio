@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Core.Application.Validations;
 using Core.Domain.Enumerables;
 using FluentValidation;
 using JuanDevPortfolio.Api.Middlewares;
@@ -57,12 +58,12 @@ namespace JuanDevPortfolio.Api.Extensions
 
 		public static IServiceCollection AddValidationsExtensions(this IServiceCollection service)
 		{
-			service.AddControllers(x =>
+			service.AddMvc(x =>
 			{
-				x.Filters.Add<ValidatorFilter>();
+				x.Filters.Add<ValidationMiddleware>();
 			});
 
-			service.AddValidatorsFromAssemblyContaining<Program>();
+			service.AddValidatorsFromAssemblyContaining<CommentReferencesValidations>();
 
 			return service;
 		}

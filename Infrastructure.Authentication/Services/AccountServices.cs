@@ -70,7 +70,8 @@ namespace Infrastructure.Authentication.Services
 			var appUser = new AppUser(saveUser.FirstName, imageUrl) 
 			{
 				Email = saveUser.Email,
-				EmailConfirmed = true
+				EmailConfirmed = true,
+				UserName = saveUser.Email
 			};
 
 			var result = await userManager.CreateAsync(appUser, saveUser.Password);
