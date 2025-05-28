@@ -1,6 +1,6 @@
 ﻿namespace Core.Domain.Enumerables
 {
-    public enum LoggerKeys
+	public enum LoggerKeys
 	{
 		RepositoryLogs,
 		AuthenticationLogs,

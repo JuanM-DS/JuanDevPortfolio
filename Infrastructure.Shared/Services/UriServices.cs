@@ -14,8 +14,9 @@ namespace Infrastructure.Shared.Services
 
 		public string GetURL(string route, Dictionary<string, string> parameters)
 		{
-			var finalUrl = new Uri(Path.Combine(host, route)).ToString();
-
+			var path = string.Concat(host, "/", route);
+			var uri = new Uri(path);
+			var finalUrl = uri.ToString();
 			foreach (var item in parameters)
 			{
 				finalUrl = QueryHelpers.AddQueryString(finalUrl, item.Key, item.Value);

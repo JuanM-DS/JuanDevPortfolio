@@ -21,12 +21,12 @@ public class ValidationMiddleware : IAsyncActionFilter
 		{
 			var type = item.Value?.GetType();
 			if (type is null)
-				return;
+				continue;
 
 			var validatorType = typeof(IValidator<>).MakeGenericType(type);
-			var validator = provider.GetRequiredService(validatorType) as IValidator;
+			var validator = provider.GetService(validatorType) as IValidator;
 			if (validator is null)
-				return;
+				continue;
 
 			var validationContext = new ValidationContext<object>(item.Value!);
 			var validResult = await validator.ValidateAsync(validationContext);

@@ -49,7 +49,6 @@ namespace Infrastructure.Persistence.Repositories
 			var fileName = Path.GetFileName(file);
 			var url = Path.Combine(
 				"/",
-				"media",
 				"images",
 				directoryEntity,
 				fileName
@@ -66,9 +65,9 @@ namespace Infrastructure.Persistence.Repositories
 				return null;
 			}
 
-
-			var root = Directory.GetCurrentDirectory();
-			var folderPath = Path.Combine(root, "Media", "Images", directoryEntity, id);
+			var basePath = string.Concat("Images", directoryEntity, id);
+			var root = string.Concat(Directory.GetCurrentDirectory(), "Media");
+			var folderPath = Path.Combine(root, basePath);
 
 			if (!Directory.Exists(folderPath))
 				Directory.CreateDirectory(folderPath);
@@ -87,12 +86,12 @@ namespace Infrastructure.Persistence.Repositories
 			await using var stream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None);
 			await file.CopyToAsync(stream);
 
-			if (!string.IsNullOrEmpty(oldImagePath) && File.Exists(oldImagePath))
+			if (!string.IsNullOrEmpty(oldImagePath) && File.Exists(Path.Combine(root,oldImagePath)))
 			{
 				File.Delete(oldImagePath);
 			}
 
-			return fullPath;
+			return string.Concat(basePath, fileName);
 		}
 	}
 }

@@ -1,12 +1,15 @@
 ﻿using Core.Application.Interfaces.Services;
+using Core.Application.Interfaces.Shared;
 using Core.Application.Wrappers;
 using Core.Domain.Entities;
 using Infrastructure.Authentication.Context;
 using Infrastructure.Authentication.CustomEntities;
 using Infrastructure.Authentication.Interfaces;
 using Infrastructure.Authentication.Repositories;
+using Infrastructure.Authentication.Seeds;
 using Infrastructure.Authentication.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -94,5 +97,19 @@ namespace Infrastructure.Authentication
 
             return service;
         }
-	}
+	    
+        public static async Task RegisterAuthenticationSeeds(this WebApplication app)
+        {
+            var scope = app.Services.CreateScope();
+            var provider = scope.ServiceProvider;
+
+			var roleManager = provider.GetRequiredService<RoleManager<AppRole>>();
+			var userManager = provider.GetRequiredService<UserManager<AppUser>>();
+			var imageRepository = provider.GetRequiredService<IImageRepository>();
+
+
+			await RoleSeeds.RegisteRolesSeedsAsync(roleManager);
+            await UserSeeds.RegisteAdminUserSeed(userManager, imageRepository);
+        }
+    }
 }

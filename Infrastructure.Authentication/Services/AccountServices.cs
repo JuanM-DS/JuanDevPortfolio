@@ -123,7 +123,7 @@ namespace Infrastructure.Authentication.Services
 				{"Token", code}, 
 				{"UserId", user!.Id.ToString()}
 			};
-			var finalUrl = uriServices.GetURL("RessetPassword", parameters);
+			var finalUrl = uriServices.GetURL("Account/RessetPassword", parameters);
 			var viewModel = new ForgotPasswordViewModel(user.FirstName!, finalUrl, DateTime.UtcNow.AddHours(1).ToString(), DateTime.UtcNow.Year);
 			var emailRequest = new EmailRequestDTO(user!.Email!, "Cambiar Contraseña");
 			var result = await emailServices.SendTemplateAsync(emailRequest, "ForgotPasswordEmail", viewModel);
@@ -209,7 +209,7 @@ namespace Infrastructure.Authentication.Services
 		#region Privates
 		private bool IsEmailAccount(string account)
 		{
-			var result =  Regex.Match(account, "^[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,}$\r\n");
+			var result =  Regex.Match(account, @"^[\w\.-]+@[\w\.-]+\.\w{2,}$");
 			return result.Success;
 		}
 		private async Task<string> GenerateJwtTokenAsync(AppUser user)

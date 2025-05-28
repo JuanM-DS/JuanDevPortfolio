@@ -25,6 +25,7 @@ builder.Services
 builder.Host.UseSerilog();
 
 var app = builder.Build();
+await app.RegisterAuthenticationSeeds();
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();

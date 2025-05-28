@@ -5,8 +5,19 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+   
+   <PropertyGroup>
+   	<PreserveCompilationContext>true</PreserveCompilationContext>
+   	<CopyRefAssembliesToPublishDirectory>true</CopyRefAssembliesToPublishDirectory>
+   </PropertyGroup>
+   
+   <ItemGroup>
+   	<Content Include="Templates\**\*.cshtml">
+   		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+   	</Content>
+   </ItemGroup>
 
-  <ItemGroup>
+   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4">
