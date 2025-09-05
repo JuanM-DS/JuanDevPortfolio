@@ -104,11 +104,11 @@ namespace YourNamespace.Controllers
 			Summary = "Create a new profile",
 			Description = "Creates a new User profile with the provided information"
 		)]
-		[Consumes("application/json")]
+		[Consumes("multipart/form-data")]
 		[SwaggerResponse((int)HttpStatusCode.Created, "Profile created successfully")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest, "Invalid profile data")]
 		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "An error occurred while creating the profile")]
-		public async Task<IActionResult> CreateAsync(SaveProfileDTO saveModel)
+		public async Task<IActionResult> CreateAsync([FromForm]SaveProfileDTO saveModel)
 		{
 			var response = await _profileServices.CreateAsync(saveModel);
 			return StatusCode((int)response.HttpStatusCode, response);
@@ -119,11 +119,11 @@ namespace YourNamespace.Controllers
 			Summary = "Update profile",
 			Description = "Updates an existing profile by its ID"
 		)]
-		[Consumes("application/json")]
+		[Consumes("multipart/form-data")]
 		[SwaggerResponse((int)HttpStatusCode.OK, "Profile updated successfully")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest, "Invalid update data or ID")]
 		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "An error occurred while updating the profile")]
-		public async Task<IActionResult> UpdateAsync([FromBody] SaveProfileDTO saveModel, [FromRoute] Guid id)
+		public async Task<IActionResult> UpdateAsync([FromForm] SaveProfileDTO saveModel, [FromRoute] Guid id)
 		{
 			var response = await _profileServices.UpdateAsync(saveModel, id);
 			return StatusCode((int)response.HttpStatusCode, response);

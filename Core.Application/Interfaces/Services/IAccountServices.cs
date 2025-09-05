@@ -8,7 +8,7 @@ namespace Core.Application.Interfaces.Services
     {
         public Task<AppResponse<UserDTO>> RegisterAsync(SaveUserDTO saveUser);
 
-        public Task<AppResponse<string>> SignInAsync(SignInRequestDTO Login);
+        public Task<AppResponse<SingInResponse>> SignInAsync(SignInRequestDTO Login);
 
         public Task SignOutAsync();
 
@@ -16,6 +16,7 @@ namespace Core.Application.Interfaces.Services
 
         public Task<AppResponse<Empty>> ResetPassword(ResetPasswordRequestDTO request);
 
-        public Task<AppResponse<string>> GenerateResetTokenAsync();
+        public Task<AppResponse<SingInResponse>> RefreshTokenAsync(RefreshTokenRequest request);
+		Task<AppResponse<Empty>> DeleteAllRefreshTokenByUser(Guid userId);
 	}
 }

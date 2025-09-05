@@ -27,7 +27,7 @@ namespace Core.Application.Services
                     .Throw();
 
             var result = await _repo.CreateAsync(entity!);
-            if(result)
+            if(!result)
                 AppError.Create("Hubo problemas al crear la entidad.")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
                     .Throw();
@@ -50,7 +50,7 @@ namespace Core.Application.Services
                     .Throw();
 
             var result = await _repo.DeleteAsync(entity!);
-            if (result)
+            if (!result)
                 AppError.Create("Hubo problemas al eliminar la entidad.")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
                     .Throw();
@@ -103,7 +103,7 @@ namespace Core.Application.Services
                     .Throw();
             entity!.Id = Id;
 			var result = await _repo.UpdateAsync(entity!);
-            if(result)
+            if(!result)
                 AppError.Create("Hubo problemas al actualizar la entidad.")
                     .BuildResponse<TEntityDto>(HttpStatusCode.InternalServerError)
                     .Throw();

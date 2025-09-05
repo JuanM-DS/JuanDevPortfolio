@@ -65,9 +65,9 @@ namespace Infrastructure.Persistence.Repositories
 				return null;
 			}
 
-			var basePath = string.Concat("Images", directoryEntity, id);
-			var root = string.Concat(Directory.GetCurrentDirectory(), "Media");
-			var folderPath = Path.Combine(root, basePath);
+			var basePath = string.Concat("Images","/",directoryEntity,"/",id);
+			var root = string.Concat(Directory.GetCurrentDirectory(),"/","Media");
+			var folderPath = string.Concat(root,"/", basePath);
 
 			if (!Directory.Exists(folderPath))
 				Directory.CreateDirectory(folderPath);
@@ -81,7 +81,7 @@ namespace Infrastructure.Persistence.Repositories
 			}
 
 			var fileName = $"{Guid.NewGuid()}{extension}";
-			var fullPath = Path.Combine(folderPath, fileName);
+			var fullPath = string.Concat(folderPath,"/", fileName);
 
 			await using var stream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None);
 			await file.CopyToAsync(stream);
@@ -91,7 +91,7 @@ namespace Infrastructure.Persistence.Repositories
 				File.Delete(oldImagePath);
 			}
 
-			return string.Concat(basePath, fileName);
+			return string.Concat(basePath,"/", fileName);
 		}
 	}
 }

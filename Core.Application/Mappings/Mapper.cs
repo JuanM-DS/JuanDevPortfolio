@@ -28,7 +28,6 @@ namespace Core.Application.Mappings
 		[MapperIgnoreSource(nameof(CommentReference.UpdatedBy))]
 		[MapperIgnoreSource(nameof(CommentReference.IsConfirmed))]
 		[MapperIgnoreSource(nameof(CommentReference.Profile))]
-		[MapperIgnoreSource(nameof(CommentReference.AccountId))]
 		[MapperIgnoreTarget(nameof(CommentReferenceDTO.PersonName))]
 		[MapperIgnoreTarget(nameof(CommentReferenceDTO.ProfileImageUrl))]
 		private static partial CommentReferenceDTO Map(CommentReference source);
@@ -73,6 +72,8 @@ namespace Core.Application.Mappings
 		[MapperIgnoreTarget(nameof(Profile.Skills))]
 		[MapperIgnoreTarget(nameof(Profile.Experiences))]
 		[MapperIgnoreTarget(nameof(Profile.Projects))]
+		[MapperIgnoreTarget(nameof(Profile.CvUrl))]
+		[MapperIgnoreSource(nameof(SaveProfileDTO.Cv))]
 		private static partial Profile Map(SaveProfileDTO source);
 
 		[MapperIgnoreSource(nameof(Profile.Created))]

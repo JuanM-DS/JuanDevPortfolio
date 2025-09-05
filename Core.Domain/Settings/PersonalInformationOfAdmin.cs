@@ -1,4 +1,7 @@
 ﻿namespace Core.Domain.Settings
 {
-	public record PersonalInformationOfAdmin(string Email);
+	public class PersonalInformationOfAdmin
+	{
+		public string Email { get; set; } = string.Empty;
+	}
 }

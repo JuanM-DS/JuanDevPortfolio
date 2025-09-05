@@ -7,7 +7,7 @@ namespace Core.Domain.Entities
 	{
 		public string CreatedBy { get; set; } = string.Empty;
 		public DateTime Created { get; set; }
-		public string? UpdatedBy { get; set; } = string.Empty;
+		public string? UpdatedBy { get; set; } 
 		public DateTime? Updated { get; set; }
 
 		public string Name { get; set; } = string.Empty;

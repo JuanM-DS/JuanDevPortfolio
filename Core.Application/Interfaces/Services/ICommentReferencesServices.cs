@@ -7,7 +7,7 @@ namespace Core.Application.Interfaces.Services
 {
     public interface ICommentReferencesServices : IBaseServices<CommentReference, CommentReferenceDTO, SaveCommentReferenceDTO>
     {
-		public AppResponse<List<CommentReferenceDTO>> GetAll(CommentReferenceFilter filter);
+		public Task<AppResponse<List<CommentReferenceDTO>>> GetAll(CommentReferenceFilter filter);
 
 		public Task<AppResponse<Empty>> ConfirmCommentReferenceAsync(Guid Id);
 	}

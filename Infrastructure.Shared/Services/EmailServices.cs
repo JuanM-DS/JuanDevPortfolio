@@ -14,14 +14,12 @@ namespace Infrastructure.Shared.Services
 	public class EmailServices : IEmailServices
 	{
 		private readonly EmailSettings emailSettings;
-		private readonly IOptions<EmailSettings> emailSettins;
 		private readonly ITemplateServices templateServices;
 		private readonly IEncryptationServices encryptationServices;
 
 		public EmailServices(IOptions<EmailSettings> EmailSettins, ITemplateServices TemplateServices, IEncryptationServices EncryptationServices)
 		{
 			emailSettings = EmailSettins.Value;
-			emailSettins = EmailSettins;
 			templateServices = TemplateServices;
 			encryptationServices = EncryptationServices;
 		}
@@ -57,9 +55,12 @@ namespace Infrastructure.Shared.Services
 
 		private async Task<bool> SendAsync(EmailRequestDTO request, string htmlBody)
 		{
-			var host = encryptationServices.Decrypt(emailSettings.SmptHost);
-			var emailFrom = encryptationServices.Decrypt(emailSettings.EmailFrom);
-			var password = encryptationServices.Decrypt(emailSettings.SmtpPassword);
+			//var host = encryptationServices.Decrypt(emailSettings.SmptHost);
+			//var emailFrom = encryptationServices.Decrypt(emailSettings.EmailFrom);
+			//var password = encryptationServices.Decrypt(emailSettings.SmtpPassword);
+			var host = emailSettings.SmtpHost;
+			var emailFrom = emailSettings.EmailFrom;
+			var password = emailSettings.SmtpPassword;
 
 			var email = new MimeMessage();
 			email.Sender = MailboxAddress.Parse(emailFrom);

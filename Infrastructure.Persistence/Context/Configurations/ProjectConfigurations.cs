@@ -12,8 +12,7 @@ namespace Infrastructure.Persistence.Context.Configurations
 			builder.HasKey(x => x.Id);
 
 			builder.Property(x => x.Id)
-				.IsRequired()
-				.HasDefaultValueSql("NewId()");
+				.IsRequired();
 
 			builder.Property(x => x.Title)
 				.IsRequired()
@@ -64,11 +63,11 @@ namespace Infrastructure.Persistence.Context.Configurations
 				.IsRequired();
 
 			builder.Property(x => x.UpdatedBy)
-				.IsRequired()
+				.IsRequired(false)
 				.HasMaxLength(200);
 
 			builder.Property(x => x.Updated)
-				.IsRequired();
+				.IsRequired(false);
 			#endregion
 		}
 	}

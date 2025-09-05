@@ -33,5 +33,20 @@ namespace Infrastructure.Shared.Services
 
 			return roles?.ToList();
 		}
+
+		public string GetUserIpAddress()
+		{
+			if (accesor is null)
+				return "Ip Desconocida";
+
+			var ipList = accesor.HttpContext?.Request.Headers["HTTP_X_FORWARDED_FOR"].FirstOrDefault();
+
+			if (!string.IsNullOrEmpty(ipList))
+			{
+				return ipList.Split(',')[0];
+			}
+
+			return accesor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Ip Desconocida";
+		}
 	}
 }

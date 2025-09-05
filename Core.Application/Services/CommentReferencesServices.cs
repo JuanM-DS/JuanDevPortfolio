@@ -39,7 +39,7 @@ namespace Core.Application.Services
 
 			var emailRequest = new EmailRequestDTO(personalInformationOfAdmin.Email, "Confirmar Commentario");
 			var emailResult = await emailServices.SendEmailAsync(emailRequest, $"Confirmar el sigueinte comentario: {createResponse.Data.Id}");
-			if (emailResult)
+			if (!emailResult)
 				return createResponse.AddError(AppError.Create("Hubo un problema al enviar el correo para confirmar el commentario"));
 
 			return createResponse;
@@ -54,7 +54,7 @@ namespace Core.Application.Services
 
 			var emailRequest = new EmailRequestDTO(personalInformationOfAdmin.Email, "Confirmar Commentario");
 			var emailResult = await emailServices.SendEmailAsync(emailRequest, $"Confirmar el sigueinte comentario: {createUpdate.Data.Id}");
-			if (emailResult)
+			if (!emailResult)
 				return createUpdate.AddError(AppError.Create("Hubo un problema al enviar el correo para confirmar el commentario"));
 
 			return createUpdate;
@@ -70,7 +70,7 @@ namespace Core.Application.Services
 
 			commentReference!.IsConfirmed = true;
 			var result = await repo.UpdateAsync(commentReference);
-			if (result) 
+			if (!result) 
 				AppError.Create("Hubo un problema al cambiar el estado de confirmacion del comentario")
 					.BuildResponse<Empty>(HttpStatusCode.InternalServerError)
 					.Throw();
@@ -92,19 +92,82 @@ namespace Core.Application.Services
 			return new(HttpStatusCode.OK);
 		}
 
-		public AppResponse<List<CommentReferenceDTO>> GetAll(CommentReferenceFilter filter)
+		public async Task<AppResponse<List<CommentReferenceDTO>>> GetAll(CommentReferenceFilter filter)
 		{
 			var data = repo.GetAll(filter).ToList();
 			if (data is null || !data.Any())
 				return new(HttpStatusCode.NoContent, "No hay elementos para mostrar");
 
-			var dataDto = Mapper.Map<CommentReferenceDTO, CommentReference>(data);
+			var tasks = data.Select(async item =>
+			{
+				var user = (await userServices.GetByIdAsync(item.AccountId)).Data;
+				if (user is null)
+					return null;
+
+				return new CommentReferenceDTO(
+					item.Id,
+					item.Comment,
+					item.ProfileId,
+					item.AccountId,
+					user.FirstName,
+					user.ProfileImageUrl
+				);
+
+			});
+			var results = await Task.WhenAll(tasks);
+			var dataDto = results.Where(x => x is not null).ToList();
 			if (dataDto is null)
 				AppError.Create("Hubo problemas al mappear la request")
 					.BuildResponse<CommentReferenceDTO>(HttpStatusCode.InternalServerError)
 					.Throw();
 
-			return new(dataDto, HttpStatusCode.OK);
+			return new(dataDto!, HttpStatusCode.OK);
+		}
+
+		public override async Task<AppResponse<List<CommentReferenceDTO>>> GetAll()
+		{
+			var response = await base.GetAll();
+			var newList = new List<CommentReferenceDTO>();
+			if (response.Data is null)
+				return response;
+
+			var tasks = response.Data.Select(async item =>
+			{
+				var user = (await userServices.GetByIdAsync(item.AccountId)).Data;
+				if (user is null)
+					return null;
+
+				return new CommentReferenceDTO(
+					item.Id,
+					item.Comment,
+					item.ProfileId,
+					item.AccountId,
+					user.FirstName,
+					user.ProfileImageUrl
+				);
+			});
+
+			var results = await Task.WhenAll(tasks);
+			response.Data = results.Where(r => r != null).ToList()!;
+			return response;
+		}
+
+		public override async Task<AppResponse<CommentReferenceDTO?>> GetByIdAsync(Guid Id)
+		{
+			var response = await base.GetByIdAsync(Id);
+			var data = response.Data;
+			if (data is null)
+				return response;
+
+			var userByAccount = (await userServices.GetByIdAsync(data.AccountId)).Data;
+			if(userByAccount is null)
+			{
+				response = response.AddError(AppError.Create("Hubo un error al buscar la cuenta asociada al comentario"));
+				return response;
+			}
+			var newItem = new CommentReferenceDTO(data.Id, data.Comment, data.ProfileId, data.AccountId, userByAccount.FirstName, userByAccount.ProfileImageUrl);
+			response.Data = newItem;
+			return response;
 		}
 	}
 }

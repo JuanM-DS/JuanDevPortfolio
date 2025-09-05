@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JuanDevPortfolio.Api", "Jua
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JuanDevPortfolio.Client", "JuanDevPortfolio.Client\JuanDevPortfolio.Client.csproj", "{4D8A0373-3BE5-41AC-827F-31356736F9E7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.BackgroundServices", "BackgroundServices\Infrastructure.BackgroundServices.csproj", "{04DA6F9B-E719-4634-ACD2-93E64990F296}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{4D8A0373-3BE5-41AC-827F-31356736F9E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D8A0373-3BE5-41AC-827F-31356736F9E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D8A0373-3BE5-41AC-827F-31356736F9E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04DA6F9B-E719-4634-ACD2-93E64990F296}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04DA6F9B-E719-4634-ACD2-93E64990F296}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04DA6F9B-E719-4634-ACD2-93E64990F296}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04DA6F9B-E719-4634-ACD2-93E64990F296}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,5 +80,6 @@ Global
 		{A99EDDA8-3017-497C-A08D-6787FF996C8C} = {50018767-A3A2-445F-B2B7-15C3C4270B6F}
 		{C51517DD-7E1E-458B-A43F-D591D0A076DB} = {829B6873-FEAE-4A16-A619-615CF8E0154D}
 		{4D8A0373-3BE5-41AC-827F-31356736F9E7} = {829B6873-FEAE-4A16-A619-615CF8E0154D}
+		{04DA6F9B-E719-4634-ACD2-93E64990F296} = {50018767-A3A2-445F-B2B7-15C3C4270B6F}
 	EndGlobalSection
 EndGlobal

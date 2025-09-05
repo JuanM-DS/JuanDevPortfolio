@@ -13,11 +13,10 @@ namespace Infrastructure.Authentication.Seeds
 			var adminUser = new AppUser(RoleType.Admin.ToString(), defualImage) { Email = "admin@gmail.com", UserName = RoleType.Admin.ToString() };
 
 			if ((await userManager.FindByNameAsync(adminUser!.UserName) is null))
+			{
 				await userManager.CreateAsync(adminUser, "Pa$$word!123");
-
-
-			if ((await userManager.FindByEmailAsync(adminUser!.Email) is null))
 				await userManager.AddToRoleAsync(adminUser, RoleType.Admin.ToString());
+			}
 		}
 	}
 }

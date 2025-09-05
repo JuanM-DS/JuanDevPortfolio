@@ -8,6 +8,7 @@ using Core.Application.QueryFilters;
 using Core.Application.Wrappers;
 using Core.Domain.Entities;
 using System.Net;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Core.Application.Services
 {
@@ -16,13 +17,15 @@ namespace Core.Application.Services
 		private readonly IProfileRepository repo;
 		private readonly IHttpContextProvider httpContextProvider;
 		private readonly IUserServices userServices;
+		private readonly IResumeRepository _resumeRepository;
 
-		public ProfileServices(IProfileRepository repo, IHttpContextProvider httpContextProvider, IUserServices userServices)
+		public ProfileServices(IProfileRepository repo, IHttpContextProvider httpContextProvider, IUserServices userServices, IResumeRepository ResumeRepository)
             : base(repo)
 		{
 			this.repo = repo;
 			this.httpContextProvider = httpContextProvider;
 			this.userServices = userServices;
+			_resumeRepository = ResumeRepository;
 		}
 
 		public async Task<AppResponse<List<ProfileDTO>>> GetAll(ProfileFilter filter)
@@ -118,12 +121,83 @@ namespace Core.Application.Services
 
 			var userResponse = await userServices.GetByIdAsync(data.Data.AccountId);
 			if (userResponse.Data is null)
-				AppError.Create("No se encontró el usuario perteneciente al perfil solicitado.")
-					.BuildResponse<ProfileDTO>(HttpStatusCode.InternalServerError)
-					.Throw();
+			{
+				data = data.AddError(AppError.Create("No se encontro el usuario asociado al perfil"));
+				return data;
+			}
 
 			data.Data.User = userResponse.Data!;
 			return data;
+		}
+
+		public override async Task<AppResponse<ProfileDTO>> CreateAsync(SaveProfileDTO saveDto)
+		{
+			var response = await base.CreateAsync(saveDto);
+			var profile = response.Data;
+			if (!response.Succeded || profile is null)
+				return response;
+
+			if (saveDto.Cv is null || saveDto.Cv.Length == 0)
+				return response;
+
+			var url = await _resumeRepository.SaveResumeAsync(saveDto.Cv, profile.Id);
+			if (string.IsNullOrEmpty(url))
+			{
+				response = response.AddError(AppError.Create("Hubo un problema a la hora de guardar el cv"));
+				return response;
+			}
+			var result = await repo.SetResumeToProfile(profile.Id, url);
+			if (!result)
+			{
+				response = response.AddError(AppError.Create("Hubo un problema a la hora de guardar el cv"));
+				return response;
+			}
+			response.Data!.CvUrl = url;
+			return response;
+		}
+
+		public override async Task<AppResponse<ProfileDTO>> UpdateAsync(SaveProfileDTO saveDto, Guid Id)
+		{
+			var response =  await base.UpdateAsync(saveDto, Id);
+
+			if (response.Data is null)
+				return response;
+
+			var userResponse = await userServices.GetByIdAsync(response.Data.AccountId);
+			if (userResponse.Data is null)
+			{
+				response = response.AddError(AppError.Create("No se encontro el usuario asociado al perfil"));
+				return response;
+			}
+			response.Data.User = userResponse.Data!;
+
+			if (saveDto.Cv is null)
+				return response;
+
+			var url = await _resumeRepository.SaveResumeAsync(saveDto.Cv, Id);
+			if (string.IsNullOrEmpty(url))
+			{
+				response = response.AddError(AppError.Create("Hubo un problema a la hora de guardar el cv"));
+				return response;
+			}
+			var result = await repo.SetResumeToProfile(Id, url);
+			if (!result)
+			{
+				response = response.AddError(AppError.Create("Hubo un problema a la hora de guardar el cv"));
+				return response;
+			}
+			
+			response.Data!.CvUrl = url;
+			return response;
+		}
+
+		public override Task<AppResponse<Guid>> DeleteAsync(Guid Id)
+		{
+			var response = base.DeleteAsync(Id);
+
+			_resumeRepository.DeleteResume(Id);
+
+			return response;
 		}
 	}
 }

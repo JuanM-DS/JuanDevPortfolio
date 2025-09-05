@@ -10,10 +10,9 @@ namespace Infrastructure.Persistence.Context.Configurations
         {
             builder.ToTable("Profiles");
             builder.HasKey(x => x.Id);
-
+            builder.HasIndex(x => x.AccountId).IsUnique();
             builder.Property(x => x.Id)
-                .IsRequired()
-                .HasDefaultValueSql("NewId()");
+                .IsRequired();
 
             builder.Property(x => x.ProfesionalTitle)
                 .IsRequired()
@@ -35,7 +34,7 @@ namespace Infrastructure.Persistence.Context.Configurations
                 .HasMaxLength(500);
 
             builder.Property(x => x.CvUrl)
-                .IsRequired()
+                .IsRequired(false)
                 .HasMaxLength(500);
 
             builder.HasMany(x => x.ComenntReferences)
@@ -60,19 +59,19 @@ namespace Infrastructure.Persistence.Context.Configurations
 
 			#region AuditableProperties
 			builder.Property(x => x.CreatedBy)
-                .IsRequired()
-                .HasMaxLength(200);
+				.IsRequired()
+				.HasMaxLength(200);
 
-            builder.Property(x => x.Created)
-                .IsRequired();
+			builder.Property(x => x.Created)
+				.IsRequired();
 
-            builder.Property(x => x.UpdatedBy)
-                .IsRequired()
-                .HasMaxLength(200);
+			builder.Property(x => x.UpdatedBy)
+				.IsRequired(false)
+				.HasMaxLength(200);
 
-            builder.Property(x => x.Updated)
-                .IsRequired();
-            #endregion
-        }
-    }
+			builder.Property(x => x.Updated)
+				.IsRequired(false);
+			#endregion
+		}
+	}
 }

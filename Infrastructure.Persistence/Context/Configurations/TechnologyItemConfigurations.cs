@@ -13,8 +13,7 @@ namespace Infrastructure.Persistence.Context.Configurations
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Id)
-                .IsRequired()
-                .HasDefaultValueSql("NewId()");
+                .IsRequired();
 
             builder.Property(x => x.Name)
                 .IsRequired()
@@ -39,21 +38,21 @@ namespace Infrastructure.Persistence.Context.Configurations
                 x => (LevelsTypes)Enum.Parse(typeof(LevelsTypes), x)
                 );
 
-            #region AuditableProperties
-            builder.Property(x => x.CreatedBy)
-                .IsRequired()
-                .HasMaxLength(200);
+			#region AuditableProperties
+			builder.Property(x => x.CreatedBy)
+				.IsRequired()
+				.HasMaxLength(200);
 
-            builder.Property(x => x.Created)
-                .IsRequired();
+			builder.Property(x => x.Created)
+				.IsRequired();
 
-            builder.Property(x => x.UpdatedBy)
-                .IsRequired()
-                .HasMaxLength(200);
+			builder.Property(x => x.UpdatedBy)
+				.IsRequired(false)
+				.HasMaxLength(200);
 
-            builder.Property(x => x.Updated)
-                .IsRequired();
-            #endregion
-        }
-    }
+			builder.Property(x => x.Updated)
+				.IsRequired(false);
+			#endregion
+		}
+	}
 }

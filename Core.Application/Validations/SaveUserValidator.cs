@@ -9,7 +9,10 @@ namespace Core.Application.Validations
 		{
 			RuleFor(x => x.Email)
 				.NotEmpty().WithMessage("El correo electrónico es obligatorio.")
-				.EmailAddress().WithMessage("El correo electrónico no tiene un formato válido.");
+				.EmailAddress().WithMessage("El correo electrónico no tiene un formato válido.")
+				.Matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+				.WithMessage("El correo electrónico no cumple con el formato personalizado.");
+
 
 			RuleFor(x => x.Password)
 				.NotEmpty().WithMessage("La contraseña es obligatoria.")
@@ -21,10 +24,6 @@ namespace Core.Application.Validations
 			RuleFor(x => x.FirstName)
 				.NotEmpty().WithMessage("El nombre es obligatorio.")
 				.MaximumLength(100).WithMessage("El nombre no puede exceder los 100 caracteres.");
-
-			RuleFor(x => x.Roles)
-				.NotNull().WithMessage("Debe asignar al menos un rol.")
-				.Must(roles => roles.Count > 0).WithMessage("Debe asignar al menos un rol.");
 
 			When(x => x.ImageFile != null, () =>
 			{

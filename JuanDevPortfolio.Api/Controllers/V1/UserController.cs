@@ -25,7 +25,7 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		[HttpGet]
 		[SwaggerOperation(
 			Summary = "Get all users",
-			Description = "Retrieves complete list of registered users (Admin only)"
+			Description = "Retrieves complete list of registered users"
 		)]
 		[SwaggerResponse((int)HttpStatusCode.OK, "User list retrieved successfully")]
 		[SwaggerResponse((int)HttpStatusCode.NoContent, "No User found matching criteria")]
@@ -33,6 +33,20 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		public async Task<IActionResult> GetAllAsync()
 		{
 			var response = await _userServices.GetAll();
+			return StatusCode((int)response.HttpStatusCode, response);
+		}
+
+		[HttpGet("{id:Guid}")]
+		[SwaggerOperation(
+			Summary = "Get a users",
+			Description = "Retrieves a users"
+		)]
+		[SwaggerResponse((int)HttpStatusCode.OK, "User retrieved successfully")]
+		[SwaggerResponse((int)HttpStatusCode.NoContent, "No User found matching criteria")]
+		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "Error retrieving User")]
+		public async Task<IActionResult> GetByIdAsync(Guid id)
+		{
+			var response = await _userServices.GetByIdAsync(id);
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
@@ -60,9 +74,24 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		[SwaggerResponse((int)HttpStatusCode.OK, "User deleted successfully")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest, "Invalid User ID")]
 		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "Deletion process failed")]
-		public async Task<IActionResult> DeleteAsync(Guid id)
+		public async Task<IActionResult> DeleteAsync([FromRoute]Guid id)
 		{
 			var response = await _userServices.DeleteAsync(id);
+			return StatusCode((int)response.HttpStatusCode, response);
+		}
+
+		[HttpPatch("{id:guid}")]
+		[Consumes("application/json")]
+		[SwaggerOperation(
+			Summary = "Set roles to User",
+			Description = "Set the roles to User"
+		)]
+		[SwaggerResponse((int)HttpStatusCode.OK, "User deleted successfully")]
+		[SwaggerResponse((int)HttpStatusCode.BadRequest, "Invalid User ID")]
+		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "Deletion process failed")]
+		public async Task<IActionResult> SetRolesToUser([FromRoute]Guid id, [FromBody]List<string> roles)
+		{
+			var response = await _userServices.SetRolesToUser(roles, id);
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 	}

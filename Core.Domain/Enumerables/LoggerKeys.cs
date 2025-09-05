@@ -4,6 +4,7 @@
 	{
 		RepositoryLogs,
 		AuthenticationLogs,
-		SharedLogs
+		SharedLogs,
+		BackgroundServices
 	}
 }

@@ -8,5 +8,7 @@ namespace Core.Application.Interfaces.Repositories
 		public IEnumerable<Profile> GetAll(ProfileFilter filter);
 
 		public Task<Profile?> GetByAccountAsync(Guid AccountId);
+
+		public Task<bool> SetResumeToProfile(Guid ProfileId, string cvUrl);
 	}
 }

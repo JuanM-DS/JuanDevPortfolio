@@ -5,5 +5,6 @@
 		public Guid? GetCurrentUserId();
 
 		public List<string>? CurrentUserRoles();
+		public string GetUserIpAddress();
 	}
 }

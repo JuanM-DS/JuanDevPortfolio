@@ -6,7 +6,7 @@ namespace Core.Domain.Entities
 	{
 		public string CreatedBy { get; set; } = string.Empty;
 		public DateTime Created { get; set; }
-		public string? UpdatedBy { get; set; } = string.Empty;
+		public string? UpdatedBy { get; set; } 
 		public DateTime? Updated { get; set; }
 
 		public string ProfesionalTitle { get; set; } = string.Empty;
@@ -14,7 +14,7 @@ namespace Core.Domain.Entities
 
 		public string GitHubRepositoryUrl { get; set; } = string.Empty;
 		public string LinkedinUrl { get; set; } = string.Empty;
-		public string CvUrl { get; set; } = string.Empty;
+		public string? CvUrl { get; set; }
 		public Guid AccountId { get; set; }
 
 		public ICollection<CommentReference> ComenntReferences { get; set; } = [];

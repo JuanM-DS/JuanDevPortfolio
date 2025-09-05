@@ -34,6 +34,19 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
+		[Authorize]
+		[HttpPost]
+		[Route(nameof(DeleteAllRefreshTokenOfUser))]
+		[Consumes("application/json")]
+		[SwaggerResponse((int)HttpStatusCode.OK, "Delete successful")]
+		[SwaggerResponse((int)HttpStatusCode.BadRequest, "Invalid user")]
+		[SwaggerResponse((int)HttpStatusCode.Unauthorized, "Authentication required")]
+		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "An error occurred during delete")]
+		public async Task<IActionResult> DeleteAllRefreshTokenOfUser(Guid UserId)
+		{
+			var response =  await accountServices.DeleteAllRefreshTokenByUser(UserId);
+			return StatusCode((int)response.HttpStatusCode, response);
+		}
 
 		[HttpPost]
 		[Route(nameof(SignInAsync))]
@@ -60,12 +73,27 @@ namespace JuanDevPortfolio.Api.Controllers.V1
 		)]
 		[SwaggerResponse((int)HttpStatusCode.OK, "User signed out successfully")]
 		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "An error occurred while signing out")]
-		[SwaggerResponse((int)HttpStatusCode.Forbidden, "You do not have permission to access this endpoint")]
+		[SwaggerResponse((int)HttpStatusCode.Unauthorized, "Authentication required")]
 		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "An error occurred while registering the User")]
 		public async Task<IActionResult> SignOutAsync()
 		{
 			await accountServices.SignOutAsync();
+
 			return Ok();
+		}
+
+		[Authorize]
+		[HttpPost]
+		[Route(nameof(RefreshToken))]
+		[Consumes("application/json")]
+		[SwaggerResponse((int)HttpStatusCode.OK, "User signed out successfully")]
+		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "An error occurred while signing out")]
+		[SwaggerResponse((int)HttpStatusCode.Unauthorized, "Authentication required")]
+		[SwaggerResponse((int)HttpStatusCode.InternalServerError, "An error occurred while registering the User")]
+		public async Task<IActionResult> RefreshToken(RefreshTokenRequest request)
+		{
+			var response = await accountServices.RefreshTokenAsync(request);
+			return StatusCode((int)response.HttpStatusCode, response);
 		}
 
 		[HttpPost]

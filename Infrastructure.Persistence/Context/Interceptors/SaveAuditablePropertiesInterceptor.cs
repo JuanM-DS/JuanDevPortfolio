@@ -1,5 +1,6 @@
 ﻿using Core.Application.Interfaces.Shared;
 using Core.Domain.CommonEntities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -20,17 +21,20 @@ namespace Infrastructure.Persistence.Context.Interceptors
 				return base.SavingChangesAsync(eventData, result, cancellationToken);
 
 			var entities = context.ChangeTracker.Entries<IAuditableProperties>();
+			var client = httpProvider.GetCurrentUserId().ToString();
+			if (string.IsNullOrEmpty(client))
+				client = "Anonimus User";
 
 			foreach (var item in entities)
 			{
 				switch (item.State)
 				{
 					case EntityState.Modified:
-						item.Entity.UpdatedBy = httpProvider.GetCurrentUserId().ToString() ?? "Anonimus User";
+						item.Entity.UpdatedBy = client;
 						item.Entity.Updated = DateTime.UtcNow;
 						break;
 					case EntityState.Added:
-						item.Entity.CreatedBy = httpProvider.GetCurrentUserId().ToString() ?? "Anonimus User";
+						item.Entity.CreatedBy = client;
 						item.Entity.Created = DateTime.UtcNow;
 						break;
 				}

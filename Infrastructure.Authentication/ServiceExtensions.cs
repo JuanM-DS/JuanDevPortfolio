@@ -3,6 +3,7 @@ using Core.Application.Interfaces.Shared;
 using Core.Application.Wrappers;
 using Core.Domain.Entities;
 using Infrastructure.Authentication.Context;
+using Infrastructure.Authentication.Context.Interceptors;
 using Infrastructure.Authentication.CustomEntities;
 using Infrastructure.Authentication.Interfaces;
 using Infrastructure.Authentication.Repositories;
@@ -16,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.Net;
 using System.Text;
 
@@ -25,14 +27,19 @@ namespace Infrastructure.Authentication
     {
         public static IServiceCollection AddAuthenticationLayer(this IServiceCollection service, IConfiguration confi)
         {
+
+            service.AddSingleton<AuditablePropertiesInterceptor>();
             service.AddDbContext<IdentityContext>((sp, options) =>
             {
                 //var encryptationServices = sp.GetRequiredService<IEncryptationServices>();
                 //var descripConnection = encryptationServices.Decrypt(confi.GetConnectionString("SqlConnectionString")!);
+                var auditablePropertiesInterceptor = sp.GetRequiredService<AuditablePropertiesInterceptor>();
 
-                options.UseSqlServer(confi.GetConnectionString("SqlConnectionString"),
+				options.UseSqlServer(
+                    confi.GetConnectionString("SqlConnectionString"),
                     x => x.MigrationsAssembly(typeof(IdentityContext).Assembly)
                     );
+                options.AddInterceptors(auditablePropertiesInterceptor);
 			});
 
             service.AddIdentity<AppUser, AppRole>()
@@ -41,7 +48,9 @@ namespace Infrastructure.Authentication
 
             service.AddScoped<IAccountServices, AccountServices>()
                 .AddScoped<IUserServices, UserServices>()
-				.AddScoped<IUserRepository, UserRepository>()
+                .AddScoped<IUserRepository, UserRepository>()
+                .AddScoped<IRefreshTokenRepository, RefreshTokenRepository>()
+                .AddScoped<ITokenServices, TokenServices>()
 				.AddJwtConfigurations(confi);
 
             return service;
@@ -66,7 +75,7 @@ namespace Infrastructure.Authentication
                     ValidateLifetime = true,
                     ValidIssuer = confi.GetSection("JwtSettings")["Issuer"],
                     ValidAudience = confi.GetSection("JwtSettings")["Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(confi.GetSection("JwtSettings")["ScretKey"]!)),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(confi.GetSection("JwtSettings")["SecretKey"]!)),
                     ClockSkew = TimeSpan.Zero
                 };
                 option.Events = new JwtBearerEvents()
@@ -78,20 +87,29 @@ namespace Infrastructure.Authentication
                         x.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                         return x.Response.WriteAsJsonAsync(AppError.Create(x.Exception.Message).BuildResponse<Empty>(HttpStatusCode.InternalServerError));
                     },
-                    OnChallenge = x =>
-                    {
-                        x.HandleResponse();
-                        x.Response.ContentType = "application/json";
-                        x.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                        return x.Response.WriteAsJsonAsync(AppError.Create("No estas authenticado para utilizar el recurso").BuildResponse<Empty>(HttpStatusCode.Unauthorized));
-					},
-                    OnForbidden = x =>
-                    {
+					OnChallenge = (x) =>
+					{
+						x.HandleResponse();
+						x.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
 						x.Response.ContentType = "application/json";
-						x.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-						return x.Response.WriteAsJsonAsync(AppError.Create("No estas authorizado para utilizar el recurso").BuildResponse<Empty>(HttpStatusCode.Unauthorized));
+						var response = new { Success = false, Error = "You are not authenticated" };
+						return x.Response.WriteAsync(JsonConvert.SerializeObject(response));
+					},
+					OnForbidden = x =>
+                    {
+                        x.Response.ContentType = "application/json";
+                        x.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                        return x.Response.WriteAsJsonAsync(AppError.Create("No estas authorizado para utilizar el recurso").BuildResponse<Empty>(HttpStatusCode.Unauthorized));
+                    },
+					OnTokenValidated = context =>
+					{
+						if (context.Principal?.Identity?.IsAuthenticated != true)
+						{
+							context.Fail("Token valid but not authenticated");
+						}
+						return Task.CompletedTask;
 					}
-                };
+				};
             });
                
 

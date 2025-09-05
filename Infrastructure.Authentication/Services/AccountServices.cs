@@ -8,16 +8,13 @@ using Core.Application.Wrappers;
 using Core.Domain.Entities;
 using Core.Domain.Enumerables;
 using Core.Domain.Settings;
-using Infrastructure.Authentication.Context;
 using Infrastructure.Authentication.CustomEntities;
+using Infrastructure.Authentication.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net;
-using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -32,9 +29,9 @@ namespace Infrastructure.Authentication.Services
 		private readonly IUriServices uriServices;
 		private readonly IHttpContextProvider httpContextProvider;
 		private readonly IImageRepository imageRepository;
-		private JwtSettings jwtSettings;
+		private readonly ITokenServices tokenServices;
 
-		public AccountServices(UserManager<AppUser> UserManager, RoleManager<AppRole> RoleManager, SignInManager<AppUser> SigningManager, IEmailServices EmailServices, IUriServices UriServices, IOptions<JwtSettings> JwtSettings, IHttpContextProvider HttpContextProvider, IImageRepository imageRepository)
+		public AccountServices(UserManager<AppUser> UserManager, RoleManager<AppRole> RoleManager, SignInManager<AppUser> SigningManager, IEmailServices EmailServices, IUriServices UriServices, IHttpContextProvider HttpContextProvider, IImageRepository imageRepository, ITokenServices TokenServices)
         {
             userManager = UserManager;
             roleManager = RoleManager;
@@ -43,7 +40,7 @@ namespace Infrastructure.Authentication.Services
 			uriServices = UriServices;
 			httpContextProvider = HttpContextProvider;
 			this.imageRepository = imageRepository;
-			jwtSettings = JwtSettings.Value;
+			tokenServices = TokenServices;
 		}
 		
 		public async Task<AppResponse<UserDTO>> RegisterAsync(SaveUserDTO saveUser)
@@ -86,7 +83,7 @@ namespace Infrastructure.Authentication.Services
 					.Throw();
 			}
 
-			result = await userManager.AddToRolesAsync(appUser, saveUser.Roles);
+			result = await userManager.AddToRoleAsync(appUser, RoleType.Basic.ToString());
 			if (!result.Succeeded)
 			{
 				foreach (var item in result.Errors)
@@ -97,8 +94,8 @@ namespace Infrastructure.Authentication.Services
 					.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
 					.Throw();
 			}
-
-			var userDto = new UserDTO(appUser.Id, appUser.Email, saveUser.Roles, appUser.ProfileImageUrl, appUser.FirstName);
+			var roles = appUser.Roles.Select(x =>x.Role.ToString()).ToList();
+			var userDto = new UserDTO(appUser.Id, appUser.Email, roles, appUser.ProfileImageUrl, appUser.FirstName);
 			return new(userDto, HttpStatusCode.Created);
 		}
 
@@ -137,7 +134,6 @@ namespace Infrastructure.Authentication.Services
 
 		public async Task<AppResponse<Empty>> ResetPassword(ResetPasswordRequestDTO request)
 		{
-
 			var user = await userManager.FindByIdAsync(request.UserId);
 			if(user is null)
 				AppError.Create($"Hubo un problema al verificar el usuario")
@@ -152,7 +148,8 @@ namespace Infrastructure.Authentication.Services
 			var token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.Token));
 
 			var result = await userManager.ResetPasswordAsync(user!, token, request.Password);
-			if(!result.Succeeded)
+			if (!result.Succeeded)
+			{
 				foreach (var item in result.Errors)
 				{
 					Log.ForContext(LoggerKeys.AuthenticationLogs.ToString(), true).Information(item.Description);
@@ -160,16 +157,19 @@ namespace Infrastructure.Authentication.Services
 				AppError.Create($"Hubo un error al cambiar la contraseña")
 				.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
 				.Throw();
-
+			}
+			await tokenServices.DeleteRefreshTokensByUserAsync(user!.Id);
 			return new(HttpStatusCode.OK, "Se realizo el cambio de contraseña correctamente");
 		}
 
 		public async Task SignOutAsync()
 		{
+			var currentIp = httpContextProvider.GetUserIpAddress();
+			await tokenServices.DeleteRefreshTokensByIpAsync(currentIp);
 			await signingManager.SignOutAsync();
 		}
 
-		public async Task<AppResponse<string>> SignInAsync(SignInRequestDTO Login)
+		public async Task<AppResponse<SingInResponse>> SignInAsync(SignInRequestDTO Login)
 		{
 			var user = IsEmailAccount(Login.Account) switch
 			{
@@ -182,28 +182,64 @@ namespace Infrastructure.Authentication.Services
 					.BuildResponse<Empty>(HttpStatusCode.BadRequest)
 					.Throw();
 
-			var result = await signingManager.PasswordSignInAsync(user!, Login.Password, false, false);
-			if(result.Succeeded)
+			var result = await signingManager.CheckPasswordSignInAsync(user!, Login.Password, false);
+			if(!result.Succeeded)
 				AppError.Create($"Hubo un error al iniciar sesión")
 					.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
 					.Throw();
 
-			var token = await GenerateJwtTokenAsync(user!);
+			var accessToken = await tokenServices.GenerateAccessJwtToken(user!);
+			var refreshToken = await tokenServices.GenerateRefreshToken(user!.Id);
 
-			return new(token, HttpStatusCode.OK, "Se ha Iniciado sesión correctamente");
+			var response = new SingInResponse(accessToken, refreshToken);
+			return new(response, HttpStatusCode.OK, "Se ha Iniciado sesión correctamente");
 		}
 
-		public async Task<AppResponse<string>> GenerateResetTokenAsync()
+		public async Task<AppResponse<SingInResponse>> RefreshTokenAsync(RefreshTokenRequest request)
 		{
 			var userName = httpContextProvider.GetCurrentUserId();
 			var user = await userManager.FindByIdAsync(userName.ToString() ?? "");
-			if(userName is null)
+			if(user is null)
 				AppError.Create($"No existe ningún usuario en sesión")
 					.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
 					.Throw();
 
-			var token = await GenerateJwtTokenAsync(user!);
-			return new(token, HttpStatusCode.OK, "Se ha generado un nuevo token correctamente");
+			if (!tokenServices.IsAccessTokenValid(request.AccessToken))
+			{
+				AppError.Create($"Favor Volver a iniciar sesión")
+					.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
+					.Throw();
+			}
+
+			if(!await tokenServices.IsRefreshTokenValid(request.RefreshToken))
+			{
+				await tokenServices.DeleteRefreshTokenAsync(request.RefreshToken);
+				AppError.Create($"Favor Volver a iniciar sesión")
+					.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
+					.Throw();
+			}
+
+			var accessToken = await tokenServices.GenerateAccessJwtToken(user!);
+			var refreshToken = await tokenServices.UpdateRefreshTokenAsync(request.RefreshToken);
+			if (string.IsNullOrEmpty(refreshToken))
+			{
+				AppError.Create($"hubo un problema al refrescar el token")
+					.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
+					.Throw();
+			}
+
+			var response = new SingInResponse(accessToken, refreshToken!);
+			return new(response, HttpStatusCode.OK, "Se ha generado un nuevo token correctamente");
+		}
+
+		public async Task<AppResponse<Empty>> DeleteAllRefreshTokenByUser(Guid userId)
+		{
+			var result = await tokenServices.DeleteRefreshTokensByUserAsync(userId);
+			if (result)
+				AppError.Create("Hubo un problema a la hora de eliminar los tokens")
+								.BuildResponse<Empty>(HttpStatusCode.BadRequest).Throw();
+
+			return new(HttpStatusCode.OK);
 		}
 
 		#region Privates
@@ -211,35 +247,6 @@ namespace Infrastructure.Authentication.Services
 		{
 			var result =  Regex.Match(account, @"^[\w\.-]+@[\w\.-]+\.\w{2,}$");
 			return result.Success;
-		}
-		private async Task<string> GenerateJwtTokenAsync(AppUser user)
-		{
-			var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.ScretKey));
-			var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.Sha256);
-			var header = new JwtHeader(credentials);
-
-			var userClaims = await userManager.GetClaimsAsync(user);
-			var roleClaims = (await userManager.GetRolesAsync(user)).Select(x => new Claim(ClaimTypes.Role, x));
-			var claims = new List<Claim>()
-			{
-				new Claim(JwtRegisteredClaimNames.Sub, user.UserName!),
-				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-				new Claim(JwtRegisteredClaimNames.Email, user.Email!),
-				new Claim("UserId", user.Id.ToString())
-			}
-			.Union(userClaims).Union(roleClaims);
-
-			var payload = new JwtPayload
-				(
-				jwtSettings.Issuer,
-				jwtSettings.Audience,
-				claims,
-				DateTime.UtcNow,
-				DateTime.UtcNow.AddMinutes(jwtSettings.DurationInMinutes)
-				);
-
-			var token = new JwtSecurityToken(header, payload);
-			return new JwtSecurityTokenHandler().WriteToken(token);
 		}
 		#endregion
 	}

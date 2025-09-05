@@ -8,8 +8,9 @@ namespace Infrastructure.Authentication.Context
     {
         public override DbSet<AppUser> Users { get; set; } = null!;
         public override DbSet<AppRole> Roles { get; set; } = null!;
+        public DbSet<RefreshToken> RefreshToken { get; set; } = null!;
 
-        public IdentityContext(DbContextOptions<IdentityContext> options)
+		public IdentityContext(DbContextOptions<IdentityContext> options)
             : base(options)
         {}
 

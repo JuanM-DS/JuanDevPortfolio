@@ -2,7 +2,7 @@
 using Core.Application.Validations;
 using Core.Domain.Enumerables;
 using FluentValidation;
-using JuanDevPortfolio.Api.Middlewares;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -15,7 +15,7 @@ namespace JuanDevPortfolio.Api.Extensions
 			service.AddControllers()
 				.ConfigureApiBehaviorOptions(option =>
 				{
-					option.SuppressMapClientErrors = true;
+					option.SuppressModelStateInvalidFilter = true;
 				});
 			return service;
 		}
@@ -24,7 +24,7 @@ namespace JuanDevPortfolio.Api.Extensions
 		{
 			service.AddLogging();
 			Log.Logger = new LoggerConfiguration()
-				.MinimumLevel.Information()
+				.MinimumLevel.Verbose()
 				.WriteTo.File("Logs\\General_log.txt")
 				.WriteTo.Logger(lg =>
 
@@ -39,6 +39,11 @@ namespace JuanDevPortfolio.Api.Extensions
 				{
 					x.Filter.ByIncludingOnly(p => p.Properties.ContainsKey(LoggerKeys.SharedLogs.ToString()))
 					.WriteTo.File($"Logs\\Infrastructure\\{LoggerKeys.SharedLogs}.txt");
+				})
+				.WriteTo.Logger(l =>
+				{
+					l.Filter.ByIncludingOnly(p => p.Properties.ContainsKey(LoggerKeys.BackgroundServices.ToString()))
+					.WriteTo.File($"Logs\\Infrastructure\\{LoggerKeys.BackgroundServices}.txt");
 				})
 				.CreateLogger();
 			return service;
@@ -70,7 +75,6 @@ namespace JuanDevPortfolio.Api.Extensions
 
 		public static IServiceCollection AddSwaggerExtensions(this IServiceCollection  service)
 		{
-
 			service.AddSwaggerGen(option =>
 			{
 				var xmls = Directory.GetFiles(AppContext.BaseDirectory, "*.xml", SearchOption.TopDirectoryOnly).ToList();
@@ -94,12 +98,12 @@ namespace JuanDevPortfolio.Api.Extensions
 
 				option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
 				{
-					Name = "Authentication",
+					Name = "Authorization",
 					In = ParameterLocation.Header,
 					Type = SecuritySchemeType.ApiKey,
-					Scheme = "Bearer",
+					Scheme = JwtBearerDefaults.AuthenticationScheme,
 					BearerFormat = "JWT",
-					Description = "Introduce your token like this: bearer {Your token here}"
+					Description = "JWT Authorization header using the Bearer scheme.\n\nExample: \"Bearer {token}\""
 				});
 
 				option.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -109,11 +113,11 @@ namespace JuanDevPortfolio.Api.Extensions
 						{
 							Name = "Bearer",
 							In = ParameterLocation.Header,
-							Scheme = "Bearer",
+							Scheme = JwtBearerDefaults.AuthenticationScheme,
 							Reference = new OpenApiReference
 							{
 								Type = ReferenceType.SecurityScheme,
-								Id = "Bearer"
+								Id = JwtBearerDefaults.AuthenticationScheme
 							} 
 						},
 						new List<string>()

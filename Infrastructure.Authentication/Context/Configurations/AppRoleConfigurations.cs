@@ -12,7 +12,23 @@ namespace Infrastructure.Authentication.Context.Configurations
             builder.Property(x => x.Id)
                 .HasDefaultValueSql("NEWID()");
 
-            builder.Property(x => x.Role)
+			#region AuditableProperties
+			builder.Property(x => x.CreatedBy)
+				.IsRequired()
+				.HasMaxLength(200);
+
+			builder.Property(x => x.Created)
+				.IsRequired();
+
+			builder.Property(x => x.UpdatedBy)
+				.IsRequired(false)
+				.HasMaxLength(200);
+
+			builder.Property(x => x.Updated)
+				.IsRequired(false);
+			#endregion
+
+			builder.Property(x => x.Role)
                 .IsRequired()
                 .HasConversion(
                     x => x.ToString(),

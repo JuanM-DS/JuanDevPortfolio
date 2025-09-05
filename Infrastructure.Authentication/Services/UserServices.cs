@@ -2,12 +2,12 @@
 using Core.Application.Interfaces.Services;
 using Core.Application.Interfaces.Shared;
 using Core.Application.Wrappers;
+using Core.Domain.Entities;
 using Core.Domain.Enumerables;
 using Infrastructure.Authentication.CustomEntities;
 using Infrastructure.Authentication.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Serilog;
-using System.Collections.Immutable;
 using System.Net;
 
 namespace Infrastructure.Authentication.Services
@@ -17,37 +17,36 @@ namespace Infrastructure.Authentication.Services
 		private readonly IUserRepository userRepository;
 		private readonly UserManager<AppUser> userManager;
 		private readonly IImageRepository imageRepository;
+		private readonly RoleManager<AppRole> roleManager;
 
-		public UserServices(IUserRepository userRepository, UserManager<AppUser> userManager, IImageRepository ImageRepository)
+		public UserServices(IUserRepository userRepository, UserManager<AppUser> userManager, IImageRepository ImageRepository, RoleManager<AppRole> RoleManager)
 		{
 			this.userRepository = userRepository;
 			this.userManager = userManager;
 			imageRepository = ImageRepository;
+			roleManager = RoleManager;
 		}
 
 		public async Task<AppResponse<List<UserDTO>>> GetAll()
 		{
-			var data = userRepository.GetAll();
+			var data = userRepository.GetAllWithInclude(x => x.Roles).ToList();
 			if (data is null)
 				return new(HttpStatusCode.NoContent);
-
-			var dtoTasks = data.Select(async x =>
+			var roles =  await userManager.GetRolesAsync(data[0]);
+			var dtos = data.Select(x =>
 			{
 				var dto = new UserDTO(
 					Id: x!.Id,
 					Email: x.Email!,
-					Roles: (await userManager.GetRolesAsync(x)).Select(r => r.ToString()).ToList(),
+					Roles: x.Roles.Select(x=>x.Role!.ToString()).ToList(),
 					ProfileImageUrl: x.ProfileImageUrl,
 					FirstName: x.FirstName
 				);
 				return dto;
 			});
 
-			var dtos = await Task.WhenAll(dtoTasks); 
-
 			return new(dtos.ToList(), HttpStatusCode.OK);
 		}
-
 
 		public async Task<AppResponse<UserDTO?>> GetByEmailAsync(string email)
 		{
@@ -55,11 +54,11 @@ namespace Infrastructure.Authentication.Services
 			if (appUser is null)
 				return new(HttpStatusCode.NoContent);
 
-
+			var roles = (await userManager.GetRolesAsync(appUser)).Select(x=>x.ToString()).ToList();
 			var dto = new UserDTO(
 				Id: appUser!.Id,
 				Email: appUser.Email!,
-				Roles: (await userManager.GetRolesAsync(appUser)).Select(r => r.ToString()).ToList(),
+				Roles: roles,
 				ProfileImageUrl: appUser.ProfileImageUrl,
 				FirstName: appUser.FirstName
 			);
@@ -117,7 +116,7 @@ namespace Infrastructure.Authentication.Services
 					? appUser.ProfileImageUrl
 					: savedUrl;
 			}
-
+			appUser!.FirstName = updateUser.FirstName;
 			var updateResult = await userManager.UpdateAsync(appUser!);
 			if (!updateResult.Succeeded)
 			{
@@ -129,11 +128,11 @@ namespace Infrastructure.Authentication.Services
 					.BuildResponse<UserDTO>(HttpStatusCode.BadRequest)
 					.Throw();
 			}
-
+			var roles = (await userManager.GetRolesAsync(appUser)).Select(x =>x.ToString()).ToList();
 			var dto = new UserDTO(
 				Id: appUser!.Id,
 				Email: appUser.Email!,
-				Roles: (await userManager.GetRolesAsync(appUser)).Select(x=>x.ToString()).ToList(),
+				Roles: roles,
 				ProfileImageUrl: appUser.ProfileImageUrl,
 				FirstName: appUser.FirstName
 			);
@@ -141,7 +140,7 @@ namespace Infrastructure.Authentication.Services
 			return new(dto, HttpStatusCode.OK);
 		}
 
-		public async Task<AppResponse<bool>> DeleteAsync(Guid userId)
+		public async Task<AppResponse<Empty>> DeleteAsync(Guid userId)
 		{
 			var appUser = await userManager.FindByIdAsync(userId.ToString());
 			if (appUser is null)
@@ -164,7 +163,7 @@ namespace Infrastructure.Authentication.Services
 					.Throw();
 			}
 
-			return new(true, HttpStatusCode.NoContent);
+			return new(HttpStatusCode.NoContent);
 		}
 
 		public async Task<AppResponse<UserDTO?>> GetByIdAsync(Guid Id)
@@ -173,16 +172,72 @@ namespace Infrastructure.Authentication.Services
 			if (appUser is null)
 				return new(HttpStatusCode.NoContent);
 
-
+			var roles = (await userManager.GetRolesAsync(appUser)).Select(x => x.ToString()).ToList();
 			var dto = new UserDTO(
 				Id: appUser!.Id,
 				Email: appUser.Email!,
-				Roles: (await userManager.GetRolesAsync(appUser)).Select(r => r.ToString()).ToList(),
+				Roles: roles,
 				ProfileImageUrl: appUser.ProfileImageUrl,
 				FirstName: appUser.FirstName
 			);
 
 			return new(dto, HttpStatusCode.OK);
 		}
+
+		public async Task<AppResponse<Empty>> SetRolesToUser(List<string> Roles, Guid UserId)
+		{
+			if (!Roles.Any())
+			{
+				AppError.Create("Ningún rol fue enviado")
+					.BuildResponse<bool>(HttpStatusCode.BadRequest)
+					.Throw();
+			}
+
+			var validRoles = new List<string>();
+			var notFoundRoles = new List<string>();
+
+			foreach (var roleName in Roles)
+			{
+				var role = await roleManager.FindByNameAsync(roleName);
+				if (role is null)
+					notFoundRoles.Add(roleName);
+				else
+					validRoles.Add(role.Name!);
+			}
+
+			if (notFoundRoles.Any())
+			{
+				var errors = notFoundRoles.Select(x => AppError.Create($"El rol: {x}, no fue encontrado")).ToList();
+				errors.BuildResponse<Empty>(HttpStatusCode.BadRequest).Throw();
+			}
+
+			var user = await userManager.FindByIdAsync(UserId.ToString());
+			if (user is null)
+			{
+				AppError.Create("El usuario no fue encontrado")
+					.BuildResponse<Empty>(HttpStatusCode.BadRequest)
+					.Throw();
+			}
+			var userRoles = await userManager.GetRolesAsync(user!);
+			if(userRoles.Any())
+				validRoles.RemoveAll(x=>userRoles.Contains(x));
+
+			var result = await userManager.AddToRolesAsync(user!, validRoles);
+			if (!result.Succeeded)
+			{
+				foreach (var e in result.Errors)
+				{
+					Log.ForContext(LoggerKeys.AuthenticationLogs.ToString(), true)
+					   .Information(e.Description);
+				}
+
+				AppError.Create("Error al agregar roles al usuario")
+					.BuildResponse<bool>(HttpStatusCode.BadRequest)
+					.Throw();
+			}
+
+			return new(HttpStatusCode.NoContent);
+		}
+
 	}
 }

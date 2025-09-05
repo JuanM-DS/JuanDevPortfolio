@@ -29,5 +29,15 @@ namespace Infrastructure.Persistence.Repositories
 		{
 			return await _entity.FirstOrDefaultAsync(x => x.AccountId == AccountId);
 		}
+
+		public async Task<bool> SetResumeToProfile(Guid ProfileId, string cvUrl)
+		{
+			var profile = await _entity.FindAsync(ProfileId);
+			if (profile is null)
+				return false;
+			profile.CvUrl = cvUrl;
+			var result = await _context.SaveChangesAsync();
+			return result > 0;
+		}
 	}
 }

@@ -1,11 +1,13 @@
-﻿namespace Core.Application.DTOs.Profile
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Core.Application.DTOs.Profile
 {
 	public record SaveProfileDTO(
         string ProfesionalTitle,
         string Description,
         string GitHubRepositoryUrl,
         string LinkedinUrl,
-        string CvUrl,
+        IFormFile? Cv,
 		Guid AccountId
 	);
 }

@@ -1,5 +1,5 @@
-﻿using Core.Application.Interfaces.Helpers;
-using Core.Application.Interfaces.Repositories;
+﻿using Core.Application.Interfaces.Repositories;
+using Core.Application.Interfaces.Services;
 using Core.Application.Interfaces.Shared;
 using Infrastructure.Persistence.Context;
 using Infrastructure.Persistence.Context.Interceptors;
@@ -24,12 +24,13 @@ namespace Infrastructure.Persistence
 			service.AddDbContext<MainContext>((sp, option) =>
 			{
 				//var encryptationServices = sp.GetRequiredService<IEncryptationServices>();
-				//var savingChangesInterceptor = sp.GetRequiredService<SaveAuditablePropertiesInterceptor>();
-
 				//var descrypConnSrt = encryptationServices.Encrypt(connSrt);
-				
+
+				var savingChangesInterceptor = sp.GetRequiredService<SaveAuditablePropertiesInterceptor>();
+
+
 				option.UseSqlServer("Data Source=PC\\MSSQLSERVER01; Initial Catalog=JuanDevPortfolioDB; Integrated Security=true; TrustServerCertificate=true;", x => x.MigrationsAssembly(typeof(MainContext).Assembly));
-				//option.AddInterceptors(savingChangesInterceptor);
+				option.AddInterceptors(savingChangesInterceptor);
 			});
 
 			#endregion
@@ -45,6 +46,7 @@ namespace Infrastructure.Persistence
             service.AddScoped<ITechnologyItemRepository, TechnologyItemRepository>();
             service.AddScoped<ICommentReferencesRepository, CommentReferencesRepository>();
 			service.AddScoped<IImageRepository, ImageRepository>();
+			service.AddScoped<IResumeRepository, ResumeRepository>();
 			#endregion
 
 			return service;

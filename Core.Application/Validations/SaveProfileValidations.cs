@@ -32,11 +32,13 @@ namespace Core.Application.Validations
 							 (result.Scheme == Uri.UriSchemeHttp || result.Scheme == Uri.UriSchemeHttps))
 				.WithMessage("La URL de LinkedIn debe ser una URL válida.");
 
-			RuleFor(x => x.CvUrl)
-				.NotEmpty().WithMessage("La URL del CV no puede estar vacía.")
-				.Must(uri => Uri.TryCreate(uri, UriKind.Absolute, out var result) &&
-							 (result.Scheme == Uri.UriSchemeHttp || result.Scheme == Uri.UriSchemeHttps))
-				.WithMessage("La URL del CV debe ser una URL válida.");
+			When(x => x.Cv != null, () =>
+			{
+				RuleFor(x => x.Cv!.ContentType)
+					.Equal("application/pdf")
+					.WithMessage("El archivo debe ser un PDF.");
+			});
+
 
 			RuleFor(x => x.AccountId)
 				.NotEmpty().WithMessage("El AccountId no puede estar vacío.")
